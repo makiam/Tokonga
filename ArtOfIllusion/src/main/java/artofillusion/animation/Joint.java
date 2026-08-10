@@ -111,7 +111,11 @@ public class Joint {
             Vec3 updir = parent.coords.fromLocal().timesDirection(m.timesDirection(Vec3.vy()));
             coords = new CoordinateSystem(parentPos.plus(zdir.times(length.pos)), zdir, updir);
         }
-        if(recursive) for(var child: children) child.recalcCoords(true);
+        if (recursive) {
+            for (var child : children) {
+                child.recalcCoords(true);
+            }
+        }
     }
 
     /**
@@ -152,7 +156,11 @@ public class Joint {
             angle2.pos = -ang[1];
             twist.pos = -ang[2];
         }
-        if(recursive) for(Joint child: children) child.calcAnglesFromCoords(true);
+        if (recursive) {
+            for (Joint child : children) {
+                child.calcAnglesFromCoords(true);
+            }
+        }
     }
 
     /**

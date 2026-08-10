@@ -5,8 +5,8 @@
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.procedural;
@@ -110,7 +110,7 @@ public final class ProcedureEditor extends BFrame {
         this.getComponent().getRootPane().registerKeyboardAction(ra, backKS, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         // Save the current state of the procedure so that editing can be canceled.
-        try(var out = new DataOutputStream(cancelBuffer)) {
+        try (var out = new DataOutputStream(cancelBuffer)) {
             proc.writeToStream(out, this.scene);
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error save procedure state: {}", ex.getMessage());
@@ -394,7 +394,7 @@ public final class ProcedureEditor extends BFrame {
         ByteArrayOutputStream buffer = undoStack.get(undoStack.size() - 1);
         undoStack.remove(undoStack.size() - 1);
 
-        try(var in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
+        try (var in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
             proc.readFromStream(in, scene);
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error read procedure state: {}", ex.getMessage());
@@ -421,7 +421,7 @@ public final class ProcedureEditor extends BFrame {
         ByteArrayOutputStream buffer = redoStack.get(redoStack.size() - 1);
         redoStack.remove(redoStack.size() - 1);
 
-        try(var in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
+        try (var in = new DataInputStream(new ByteArrayInputStream(buffer.toByteArray()))) {
             proc.readFromStream(in, scene);
         } catch (IOException ex) {
             log.atError().setCause(ex).log("Error read procedure state: {}", ex.getMessage());
@@ -451,7 +451,7 @@ public final class ProcedureEditor extends BFrame {
         saveState(false);
 
         // First select any links which are connected to selected modules, since they will also need to be deleted.
-        for(var link: proc.getLinks()) {
+        for (var link: proc.getLinks()) {
             if (selectedModules.contains(link.from().getModule()) || selectedModules.contains(link.to().getModule())) {
                 selectedLinks.add(link);
             }
@@ -556,7 +556,9 @@ public final class ProcedureEditor extends BFrame {
 
             g.setStroke(ProcedureEditorTheme.bold);
             for (var link: proc.getLinks()) {
-                if(selectedLinks.contains(link)) continue;
+                if (selectedLinks.contains(link)) {
+                    continue;
+                }
                 g.setColor(link.from().getValueType() == IOPort.NUMBER ? ProcedureEditorTheme.darkLinkColor : ProcedureEditorTheme.blueLinkColor);
                 var curve = createBezierCurve(link);
                 g.draw(curve);
@@ -755,8 +757,7 @@ public final class ProcedureEditor extends BFrame {
                 var mod = modules.get(i);
                 if (selectedModules.contains(mod) && mod.getBounds().contains(clickPos)) {
                     draggingModule = true;
-                    if (e.getWidget() == this) // Otherwise, it's a synthetic mouse event being sent from the ModuleMenu
-                    {
+                    if (e.getWidget() == this) { // Otherwise, it's a synthetic mouse event being sent from the ModuleMenu
                         saveState(false);
                     }
                     lastPos = clickPos;
@@ -1016,7 +1017,7 @@ public final class ProcedureEditor extends BFrame {
         /**
          * Create a new ClipboardSelection representing the current selection.
          */
-        public ClipboardSelection(Procedure proc, Set<Module<?>> selectedModules, Set<Link> selectedLinks) {
+        ClipboardSelection(Procedure proc, Set<Module<?>> selectedModules, Set<Link> selectedLinks) {
             // Determine which modules and links to copy.
 
             List<Module<?>> mod = new ArrayList<>(selectedModules);
@@ -1102,7 +1103,7 @@ public final class ProcedureEditor extends BFrame {
             @Override
             public void drop(DropTargetDropEvent event) {
                 try {
-                    var module = (Module)event.getTransferable().getTransferData(ProceduralModule.moduleFlavor);
+                    var module = (Module) event.getTransferable().getTransferData(ProceduralModule.moduleFlavor);
                     module.setPosition(event.getLocation().x, event.getLocation().y);
                     ProcedureEditor.this.addModule(module); // Wrap into undoable action
                     repaint();

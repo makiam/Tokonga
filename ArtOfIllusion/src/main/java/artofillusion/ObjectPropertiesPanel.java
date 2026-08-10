@@ -465,8 +465,10 @@ public class ObjectPropertiesPanel extends ColumnContainer {
 
             }
         }
-        
-        if (tex == null) { return; }
+
+        if (tex == null) {
+            return;
+        }
 
         UndoRecord undo = new UndoRecord(window);
         for (ObjectInfo object : objects) {
@@ -509,7 +511,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         }
         if (noMaterial) {
             UndoRecord undo = new UndoRecord(window);
-            for(ObjectInfo object: objects) {
+            for (ObjectInfo object : objects) {
                 if (object.getObject().getMaterial() == mat) {
                     continue;
                 }
@@ -522,7 +524,7 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             window.getScore().tracksModified(false);
         } else if (mat != null) {
             UndoRecord undo = new UndoRecord(window);
-            for(ObjectInfo object: objects) {
+            for (ObjectInfo object : objects) {
                 if (object.getObject().getMaterial() == mat) {
                     continue;
                 }
@@ -559,11 +561,11 @@ public class ObjectPropertiesPanel extends ColumnContainer {
             }
         }
         boolean changed = false;
-        for(var item: objects) {
-            for(int j = 0; j < propEditor.length; j++) {
-                if(propEditor[j].getWidget() == ev.getSource()) {
+        for (var item : objects) {
+            for (int j = 0; j < propEditor.length; j++) {
+                if (propEditor[j].getWidget() == ev.getSource()) {
                     Object value = propEditor[j].getValue();
-                    if(!item.getObject().getPropertyValue(j).equals(value)) {
+                    if (!item.getObject().getPropertyValue(j).equals(value)) {
                         item.getObject().setPropertyValue(j, value);
                         changed = true;
                     }
@@ -602,8 +604,11 @@ public class ObjectPropertiesPanel extends ColumnContainer {
         // TBD: On Pure Swing Migration
         log.info("MS");
     }
+
     private void materialItemChanged(ItemEvent event) {
-        if(event.getStateChange() != ItemEvent.DESELECTED) log.info("MC {}", event);
+        if (event.getStateChange() != ItemEvent.DESELECTED) {
+            log.info("MC {}", event);
+        }
 
     }
 

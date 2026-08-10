@@ -366,7 +366,7 @@ public class RotationTrack extends Track<RotationTrack> {
 
         quaternion = use;
         tc.setSubdivideAdaptively(!quaternion);
-        for(var keyframe: tc.getValues()) {
+        for (var keyframe : tc.getValues()) {
             RotationKeyframe v = (RotationKeyframe) keyframe;
             v.setUseQuaternion(use);
         }
@@ -637,7 +637,9 @@ public class RotationTrack extends Track<RotationTrack> {
         jointChoice.add(Translate.text("objectOrigin"));
         Joint[] joints = (s == null ? null : s.getJoints());
         if (joints != null) {
-            for(Joint value: joints) jointChoice.add(value.name);
+            for (Joint value : joints) {
+                jointChoice.add(value.name);
+            }
             for (int i = 0; i < joints.length; i++) {
                 if (joints[i].id == joint) {
                     jointChoice.setSelectedIndex(i + 1);

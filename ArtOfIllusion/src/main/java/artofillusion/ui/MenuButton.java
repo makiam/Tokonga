@@ -96,7 +96,7 @@ public class MenuButton extends JButton {
     @Override
     public void applyComponentOrientation(ComponentOrientation o) {
         super.applyComponentOrientation(o);
-        if (popupMenu!=null) {
+        if (popupMenu != null) {
             popupMenu.applyComponentOrientation(o);
         }
     }
@@ -123,8 +123,9 @@ public class MenuButton extends JButton {
     @Override
     public Dimension getPreferredSize() {
         Dimension size = super.getPreferredSize();
-        if (size!=null)
+        if (size != null) {
             size.width += CompoundIcon.SPACING;
+        }
         return size;
     }
 
@@ -182,10 +183,11 @@ public class MenuButton extends JButton {
      */
     @Override
     public void setIcon(Icon icon) {
-        if (compoundIcon==null)
+        if (compoundIcon == null) {
             compoundIcon = new CompoundIcon(icon);
-        else
+        } else {
             compoundIcon.setOtherIcon(icon);
+        }
         super.setIcon(compoundIcon);
     }
 
@@ -213,7 +215,7 @@ public class MenuButton extends JButton {
             Point location = getLocation();
             location.y = getHeight();
             popupMenu.applyComponentOrientation(MenuButton.this.getComponentOrientation());
-            popupMenu.show(MenuButton.this, 0,location.y);
+            popupMenu.show(MenuButton.this, 0, location.y);
         }
 
     }
@@ -235,13 +237,17 @@ public class MenuButton extends JButton {
 
         @Override
         public int getIconHeight() {
-            if (otherIcon==null) return arrowIcon.getIconHeight();
+            if (otherIcon == null) {
+                return arrowIcon.getIconHeight();
+            }
             return Math.max(otherIcon.getIconHeight(), arrowIcon.getIconHeight());
         }
 
         @Override
         public int getIconWidth() {
-            if (otherIcon==null) return arrowIcon.getIconWidth();
+            if (otherIcon == null) {
+                return arrowIcon.getIconWidth();
+            }
             return otherIcon.getIconWidth() + SPACING + arrowIcon.getIconWidth();
         }
 
@@ -256,7 +262,7 @@ public class MenuButton extends JButton {
         }
 
         private int paintOtherIcon(Component c, Graphics g, int x, int y) {
-            if (otherIcon!=null) {
+            if (otherIcon != null) {
                 otherIcon.paintIcon(c, g, x,y);
                 x += otherIcon.getIconWidth() + SPACING;
             }
@@ -308,7 +314,7 @@ public class MenuButton extends JButton {
         @Override
         public void paintIcon(Component c, Graphics g, int x, int y) {
             Color color = UIManager.getColor("Label.foreground");
-            if (color==null) { // The button's foreground, should be the same
+            if (color == null) { // The button's foreground, should be the same
                 color = c.getForeground();
             }
             g.setColor(color);

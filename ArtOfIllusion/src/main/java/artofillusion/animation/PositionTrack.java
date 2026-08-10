@@ -625,7 +625,9 @@ public class PositionTrack extends Track<PositionTrack> {
         BComboBox jointChoice = new BComboBox();
         jointChoice.add(Translate.text("objectOrigin"));
         if (joints != null) {
-            for(var value: joints) jointChoice.add(value.name);
+            for (var value : joints) {
+                jointChoice.add(value.name);
+            }
             for (int i = 0; i < joints.length; i++) {
                 if (joints[i].id == joint) {
                     jointChoice.setSelectedIndex(i + 1);

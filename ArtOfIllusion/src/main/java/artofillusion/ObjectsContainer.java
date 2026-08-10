@@ -29,7 +29,7 @@ sealed interface ObjectsContainer permits Scene {
      * Get the number of objects in this scene.
      */
     default int getNumObjects() {
-        var scene = (Scene)this;
+        var scene = (Scene) this;
         return scene.objects.size();
     }
 
@@ -37,7 +37,7 @@ sealed interface ObjectsContainer permits Scene {
      * Get the i'th object.
      */
     default ObjectInfo getObject(int i) {
-        var scene = (Scene)this;
+        var scene = (Scene) this;
         return scene.objects.get(i);
     }
 
@@ -46,7 +46,7 @@ sealed interface ObjectsContainer permits Scene {
      * more than one object has the same name, this will return the first one.
      */
     default ObjectInfo getObject(String name) {
-        var scene = (Scene)this;
+        var scene = (Scene) this;
         return scene.objects.stream().filter(info -> info.getName().equals(name)).findFirst().orElse(null);
     }
 
@@ -54,7 +54,7 @@ sealed interface ObjectsContainer permits Scene {
      * Get the object with the specified ID, or null if there is none.
      */
     default ObjectInfo getObjectById(int id) {
-        var scene = (Scene)this;
+        var scene = (Scene) this;
         return scene.objects.stream().filter(info -> info.getId() == id).findFirst().orElse(null);
     }
 }

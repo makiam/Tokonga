@@ -157,7 +157,9 @@ public class PoseTrack extends Track<PoseTrack> {
      */
     @Override
     public Keyframe setKeyframeIfModified(double time) {
-        for(var subtrack: subtracks) subtrack.setKeyframeIfModified(time);
+        for (var subtrack : subtracks) {
+            subtrack.setKeyframeIfModified(time);
+        }
         if (tc.getTimes().length == 0) {
             return setKeyframe(time);
         }
@@ -332,7 +334,9 @@ public class PoseTrack extends Track<PoseTrack> {
             v[i].writeToStream(out);
             s[i].writeToStream(out);
         }
-        for(var subtrack: subtracks) subtrack.writeToStream(out, scene);
+        for (var subtrack : subtracks) {
+            subtrack.writeToStream(out, scene);
+        }
     }
 
     /**
@@ -371,7 +375,9 @@ public class PoseTrack extends Track<PoseTrack> {
         if (version == 0) {
             theWeight.initFromStream(in, scene);
         } else {
-            for(var subtrack: subtracks) subtrack.initFromStream(in, scene);
+            for (var subtrack : subtracks) {
+                subtrack.initFromStream(in, scene);
+            }
         }
     }
 

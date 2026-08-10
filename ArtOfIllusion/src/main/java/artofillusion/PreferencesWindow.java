@@ -34,7 +34,7 @@ public class PreferencesWindow {
     private final PreferencesEditor appearance = new AppearancePreferencesPanel();
     private final PreferencesEditor extras = new ExtraPluginsPane();
     private final PreferencesEditor keystrokePanel = new KeystrokePreferencesPanel();
-    
+
     private BComboBox defaultRendChoice, objectRendChoice, texRendChoice, toolChoice;
     private ValueField interactiveTolField;
     private ValueField undoField;
@@ -50,11 +50,11 @@ public class PreferencesWindow {
     public PreferencesWindow(BFrame parent) {
         BTabbedPane tabs = new BTabbedPane();
         tabs.add(createGeneralPanel(), Translate.text("general"));
-        
-        tabs.add(appearance.getPreferencesPanel(), appearance.getName());        
-        tabs.add(keystrokePanel.getPreferencesPanel(), keystrokePanel.getName());        
+
+        tabs.add(appearance.getPreferencesPanel(), appearance.getName());
+        tabs.add(keystrokePanel.getPreferencesPanel(), keystrokePanel.getName());
         tabs.add(extras.getPreferencesPanel(), extras.getName());
-        
+
         tabs.setSelectedTab(lastTab);
         boolean done = false;
 
@@ -74,7 +74,7 @@ public class PreferencesWindow {
             }
         }
         ApplicationPreferences preferences = ArtOfIllusion.getPreferences();
-        
+
         List<Renderer> renderers = PluginRegistry.getPlugins(Renderer.class);
         if (!renderers.isEmpty()) {
             preferences.setDefaultRenderer(PreferencesWindow.createNamedRenderer(renderers.get(defaultRendChoice.getSelectedIndex())));
@@ -103,20 +103,18 @@ public class PreferencesWindow {
         preferences.setUseCompoundMeshTool(toolChoice.getSelectedIndex() == 1);
 
         preferences.savePreferences();
-        
-        keystrokePanel.savePreferences();        
+
+        keystrokePanel.savePreferences();
         appearance.savePreferences();
         extras.savePreferences();
     }
 
-    private static Renderer createNamedRenderer(Renderer renderer)
-    {
+    private static Renderer createNamedRenderer(Renderer renderer) {
         try {
             return renderer.getClass().getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException ex) {
             return null;
         }
-
     }
     /**
      * Create a Choice for selecting a renderer.
@@ -220,7 +218,7 @@ public class PreferencesWindow {
             showTravelCuesScrollingBox.setEnabled(!showTravelCuesOnIdleBox.getState());
             showTravelCuesScrollingBox.setState(showTravelCuesOnIdleBox.getState());
         }
-        
+
         toolChoice = new BComboBox(new String[]{
             Translate.text("Move"),
             Translate.text("compoundMoveScaleRotate")

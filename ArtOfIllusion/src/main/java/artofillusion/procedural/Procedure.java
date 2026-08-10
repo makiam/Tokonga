@@ -128,7 +128,7 @@ public class Procedure {
     }
 
     public void deleteLink(Link link) {
-        if(links.remove(link)) {
+        if (links.remove(link)) {
             if (link.to().getType() == IOPort.INPUT) {
                 link.to().getModule().setInput(link.to(), null);
             } else {
@@ -257,7 +257,7 @@ public class Procedure {
                 String className = in.readUTF();
                 Point point = new Point(in.readInt(), in.readInt());
                 Class<?> cls = ArtOfIllusion.getClass(className);
-                if(null == cls) {
+                if (null == cls) {
                     throw new IOException("Application cannot find given module class: " + className);
                 }
 
