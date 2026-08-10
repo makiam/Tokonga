@@ -25,6 +25,8 @@ public class TemplatesListModel extends DefaultComboBoxModel<String> {
         addElement(Translate.text("polymesh:flatMesh"));
 
         var path = Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY, "PolyMeshTemplates").toFile();
-        for(var file: path.list()) addElement(file);
+        for (var file: path.list()) {
+            addElement(file);
+        }
     }
 }

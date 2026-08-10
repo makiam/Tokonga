@@ -159,19 +159,19 @@ public class PMOBJExporter {
                 continue;
             }
 
-            Wvertex[] vertices = (Wvertex[]) mesh.getVertices();
+            Wvertex[] vertices = mesh.getVertices();
             out.println(vertices.length);
-            for(var vertex: vertices) {
+            for (var vertex : vertices) {
                 out.println(vertex.r.x + " " + vertex.r.y + " " + vertex.r.z + " " + vertex.edge);
             }
             Wedge[] edges = mesh.getEdges();
             out.println(edges.length);
-            for(var edge: edges) {
+            for (var edge : edges) {
                 out.println(edge.vertex + " " + edge.next + " " + edge.hedge + " " + edge.face);
             }
             Wface[] faces = mesh.getFaces();
             out.println(faces.length);
-            for(var face: faces) {
+            for (var face: faces) {
                 out.println(face.edge);
             }
         }

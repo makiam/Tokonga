@@ -42,7 +42,9 @@ public final class MirrorMenu extends BMenu {
         public void actionPerformed(ActionEvent e) {
             PolyMesh mesh = (PolyMesh) view.getObject().getGeometry();
             var accept = mesh.getMirrorState() != PolyMesh.NO_MIRROR;
-            if(accept) SwingUtilities.invokeLater(() -> new TurnMirrorOffDialog(MirrorMenu.this.view).setVisible(true));
+            if (accept) {
+                SwingUtilities.invokeLater(() -> new TurnMirrorOffDialog(MirrorMenu.this.view).setVisible(true));
+            }
         }
     }
 

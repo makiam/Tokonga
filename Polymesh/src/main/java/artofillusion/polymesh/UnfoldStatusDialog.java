@@ -40,7 +40,7 @@ class UnfoldStatusDialog extends JDialog {
     private Thread unfoldThread;
     private final PolyMeshEditorWindow owner;
 
-    public UnfoldStatusDialog(final PolyMeshEditorWindow owner) {
+    UnfoldStatusDialog(final PolyMeshEditorWindow owner) {
         super(owner.getComponent(), Translate.text("polymesh:meshUnfolding"), true);
         this.owner = owner;
 

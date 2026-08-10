@@ -256,7 +256,7 @@ public class PMOBJImporter {
 
                 // Find the smoothness values for the edges.
                 PolyMesh.Wedge[] edges = ((PolyMesh) info.object).getEdges();
-                for(PolyMesh.Wedge edge: edges) {
+                for (PolyMesh.Wedge edge: edges) {
                     if (edge.face == -1 || edges[edge.hedge].face == -1) {
                         continue;
                     }
@@ -270,8 +270,8 @@ public class PMOBJImporter {
                     }
 
                     // Find matching vertices and compare their normals.
-                    for(int j = 0; j < f1.vi.length; j++) {
-                        for(int k = 0; k < f2.vi.length; k++) {
+                    for (int j = 0; j < f1.vi.length; j++) {
+                        for (int k = 0; k < f2.vi.length; k++) {
                             if (f1.getVertex(j).vert == f2.getVertex(k).vert) {
                                 int n1 = f1.getVertex(j).norm;
                                 int n2 = f2.getVertex(k).norm;
@@ -320,7 +320,6 @@ public class PMOBJImporter {
                 theScene.addObject(info, null);
             }
         }
-        
         return theScene;
     }
 

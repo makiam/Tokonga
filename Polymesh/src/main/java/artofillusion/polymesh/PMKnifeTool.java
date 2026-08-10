@@ -5,8 +5,8 @@ This program is free software; you can redistribute it and/or modify it under th
 terms of the GNU General Public License as published by the Free Software
 Foundation; either version 2 of the License, or (at your option) any later version.
 
-This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.polymesh;
@@ -63,7 +63,7 @@ public class PMKnifeTool extends EditingTool {
                 selection = controller.getSelection();
             }
             int sel = 0;
-            for(boolean b: selection) {
+            for (boolean b : selection) {
                 if (b) {
                     ++sel;
                     break;
@@ -219,23 +219,23 @@ public class PMKnifeTool extends EditingTool {
         Vec2 d1v = new Vec2(d1.x, d1.y).minus(p1v);
         Vec2 e = p1v.minus(p0v);
         double kross = d0v.cross(d1v);
-        double sqrkross = kross * kross;
+        double squareKross = kross * kross;
         double len0 = d0v.length2();
         double len1 = d1v.length2();
-        if (sqrkross > 1.0e-12 * len0 * len1) {
+        if (squareKross > 1.0e-12 * len0 * len1) {
             double s = e.cross(d1v) / kross;
-            //System.out.println( "s:" + s);
+
             if (s < 0 || s > 1) {
                 return -1;
             }
             s = e.cross(d0v) / kross;
-            //System.out.println( "s:" + s);
+
             if (s < 0 || s > 1) {
                 return -1;
             }
             return 1 - s;
         }
-        //parallel lines        
+        //parallel lines
         return -1;
     }
 }

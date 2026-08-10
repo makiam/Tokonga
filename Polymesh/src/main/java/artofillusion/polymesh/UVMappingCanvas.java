@@ -3,11 +3,11 @@
  *  Modifications Copyright (C) 2019 by Petri Ihalainen
  *  Changes copyright (C) 2022-2026 by Maksim Khramov
  *
- *  This program is free software; you can redistribute it and/or modify it under the 
- *  terms of the GNU General Public License as published by the Free Software 
- *  Foundation; either version 2 of the License, or (at your option) any later version. 
- *  This program is distributed in the hope that it will be useful, but WITHOUT ANY 
- *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+ *  This program is free software; you can redistribute it and/or modify it under the
+ *  terms of the GNU General Public License as published by the Free Software
+ *  Foundation; either version 2 of the License, or (at your option) any later version.
+ *  This program is distributed in the hope that it will be useful, but WITHOUT ANY
+ *  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  *  PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  */
 
@@ -182,7 +182,7 @@ public class UVMappingCanvas extends CustomWidget {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see buoy.widget.Widget#getPreferredSize()
      */
     /**
@@ -209,7 +209,7 @@ public class UVMappingCanvas extends CustomWidget {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see buoy.widget.Widget#getMinimumSize()
      */
     @Override
@@ -219,7 +219,7 @@ public class UVMappingCanvas extends CustomWidget {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see buoy.widget.Widget#getMaximumSize()
      */
     @Override
@@ -283,8 +283,10 @@ public class UVMappingCanvas extends CustomWidget {
                 g.setColor(Color.gray);
                 g.setStroke(normal);
             }
-            for(var unfoldedEdge: meshes[i].getEdges()) {
-                if (unfoldedEdge.hidden) continue;
+            for (var unfoldedEdge : meshes[i].getEdges()) {
+                if (unfoldedEdge.hidden) {
+                    continue;
+                }
 
                 var p1 = VertexToLayout(v[unfoldedEdge.v1]);
                 var p2 = VertexToLayout(v[unfoldedEdge.v2]);
@@ -453,8 +455,8 @@ public class UVMappingCanvas extends CustomWidget {
             margin = 0.25; // To do: Find the next closest vertex and fit that in too with margin
         } else if (countSelected > 1) {
             margin = Math.max(umax - umin, vmax - vmin) * 0.25;
-        } // If no vertices are selected, fit to the selected piece
-        else {
+        } else {
+            // If no vertices are selected, fit to the selected piece
             for (int j = 0; j < v.length; j++) {
                 if (vert[j].id == -1) {
                     continue;
@@ -619,8 +621,10 @@ public class UVMappingCanvas extends CustomWidget {
 
     public void clearSelection() {
         int count = 0;
-        for(boolean b: selected) {
-            if (b) count++;
+        for (boolean b : selected) {
+            if (b) {
+                count++;
+            }
         }
         int[] selChange = null;
         if (count > 0) {
@@ -715,7 +719,7 @@ public class UVMappingCanvas extends CustomWidget {
         xmax = ymax = Integer.MIN_VALUE;
         xmin = ymin = Integer.MAX_VALUE;
 
-        for(Vec2 vec2: mapping.v[currentPiece]) {
+        for (Vec2 vec2 : mapping.v[currentPiece]) {
             Point p = VertexToLayout(vec2);
             if (xmax < p.x) {
                 xmax = p.x;
@@ -954,9 +958,9 @@ public class UVMappingCanvas extends CustomWidget {
         for (int i = 0; i < meshes.length; i++) {
 
             UnfoldedVertex[] v = meshes[i].getVertices();
-            for(UnfoldedFace unfoldedFace: meshes[i].getFaces()) {
+            for (UnfoldedFace unfoldedFace : meshes[i].getFaces()) {
                 if (unfoldedFace.id >= 0 && unfoldedFace.id < texCoordIndex.length) {
-                    for(int k = 0; k < texCoordIndex[unfoldedFace.id].length; k++) {
+                    for (int k = 0; k < texCoordIndex[unfoldedFace.id].length; k++) {
                         if (unfoldedFace.v1 >= 0 && v[unfoldedFace.v1].id == texCoordIndex[unfoldedFace.id][k]) {
                             vertIndexes[unfoldedFace.id][k] = unfoldedFace.v1;
                             vertMeshes[unfoldedFace.id][k] = i;
@@ -1115,7 +1119,7 @@ public class UVMappingCanvas extends CustomWidget {
             for (int j = 0; j < count.length; j++) {
                 count[j] = 0;
             }
-            for(UnfoldedEdge unfoldedEdge: edge) {
+            for (UnfoldedEdge unfoldedEdge : edge) {
                 v1 = mappingData.invVerticesTable[currentPiece][unfoldedEdge.v1];
                 v2 = mappingData.invVerticesTable[currentPiece][unfoldedEdge.v2];
                 if (v1 == -1 || v2 == -1) {
@@ -1267,7 +1271,7 @@ public class UVMappingCanvas extends CustomWidget {
 
         @Override
         public void redo() {
-            for(int j: selection) {
+            for (int j : selection) {
                 mappingData.meshes[currentPiece].vertices[mappingData.verticesTable[currentPiece][j]].pinned
                         = !mappingData.meshes[currentPiece].vertices[mappingData.verticesTable[currentPiece][j]].pinned;
             }
@@ -1294,7 +1298,9 @@ public class UVMappingCanvas extends CustomWidget {
 
         @Override
         public void redo() {
-            for(int j: selection) selected[j] = !selected[j];
+            for (int j : selection) {
+                selected[j] = !selected[j];
+            }
             manipulator.selectionUpdated();
             repaint();
         }

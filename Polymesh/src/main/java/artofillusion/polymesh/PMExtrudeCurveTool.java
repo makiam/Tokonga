@@ -164,9 +164,9 @@ public class PMExtrudeCurveTool extends EditingTool {
             return null;
         }
         boolean nonZeroSel = false;
-        for(boolean b: sel) {
+        for (boolean b : sel) {
             nonZeroSel |= b;
-            if(nonZeroSel) {
+            if (nonZeroSel) {
                 break;
             }
         }
@@ -184,7 +184,9 @@ public class PMExtrudeCurveTool extends EditingTool {
             ++count;
             Vec3 p = new Vec3();
             int[] fe = mesh.getFaceVertices(faces[i]);
-            for(int k: fe) p.add(verts[k].r);
+            for (int k : fe) {
+                p.add(verts[k].r);
+            }
             p.scale(1.0 / (float) fe.length);
             fromPoint.add(p);
         }
@@ -200,9 +202,10 @@ public class PMExtrudeCurveTool extends EditingTool {
             if (!sel[i]) {
                 continue;
             }
-            int[] fe = mesh.getFaceVertices(faces[i]);
-            for(int k: fe) {
-                if(rotated[k]) continue;
+            for (int k : mesh.getFaceVertices(faces[i])) {
+                if (rotated[k]) {
+                    continue;
+                }
                 verts[k].r = m.times(verts[k].r);
                 rotated[k] = true;
             }
@@ -258,7 +261,7 @@ public class PMExtrudeCurveTool extends EditingTool {
         double length = 0;
         double cumul = 0;
         Vec3 previous = fromPoint;
-        for(var clickPoint: clickPoints) {
+        for (var clickPoint : clickPoints) {
             length += clickPoint.position.minus(previous).length();
             previous = clickPoint.position;
         }
@@ -266,7 +269,7 @@ public class PMExtrudeCurveTool extends EditingTool {
             clickPoints.forEach(cp -> cp.amplitude = 1.0);
         } else {
             previous = fromPoint;
-            for(var clickPoint: clickPoints) {
+            for (var clickPoint : clickPoints) {
                 cumul += clickPoint.position.minus(previous).length();
                 clickPoint.amplitude = 1.0 - cumul / length;
                 previous = clickPoint.position;
@@ -397,7 +400,7 @@ public class PMExtrudeCurveTool extends EditingTool {
         static final int HANDLE_UP = 1;
         static final int HANDLE_DOWN = 2;
 
-        public CurvePoint(Vec3 position, double amplitude) {
+        CurvePoint(Vec3 position, double amplitude) {
             this.position = position;
             amplitude = 1;
 

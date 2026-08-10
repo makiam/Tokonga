@@ -139,7 +139,9 @@ public class UnfoldedMesh {
 
         public UnfoldedEdge(DataInputStream in) throws IOException {
             short version = in.readShort();
-            if (version < 0 || version > 0) { throw new InvalidObjectException(""); }
+            if (version < 0 || version > 0) {
+                throw new InvalidObjectException("");
+            }
             v1 = in.readInt();
             v2 = in.readInt();
             f1 = in.readInt();
