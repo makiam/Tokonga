@@ -1,6 +1,7 @@
 [versions]
 buoy = "1.1.5"
 jogl = "2.6.0"
+junit = "6.0.3"
 
 [libraries]
 lombok = { module = "org.projectlombok:lombok", version = "1.18.46"}
@@ -14,9 +15,17 @@ slf-api = { module = "org.slf4j:slf4j-api", version = "2.0.18" }
 jogl-gluegen = { module = "org.jogamp.gluegen:gluegen-rt-main", version.ref = "jogl" }
 jogl-main = { module = "org.jogamp.jogl:jogl-all-main", version.ref = "jogl" }
 
-jspecify = {module = "org.jspecify:jspecify", version = "1.0.1"}
-jbannotations = {module = "org.jetbrains:annotations", version = "26.1.0"}
+jspecify = { module = "org.jspecify:jspecify", version = "1.0.1" }
+jbannotations = { module = "org.jetbrains:annotations", version = "26.1.0" }
+
+jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit = { module = "org.junit.platform:junit-platform-suite", version.ref = "junit" }
+jemmy = { module = "org.netbeans:jemmy", version = "2.2.7.5"}
+
+eventbus = { module = "org.greenrobot:eventbus-java", version = "3.3.1"}
+mtj = { module = "com.googlecode.matrix-toolkits-java:mtj", version = "0.9.14" }
 
 [bundles]
 jogl = ["jogl-gluegen", "jogl-main"]
 logging = ["logback-classic", "slf-api"]
+testing = ["jupiter", "junit", "jemmy"]
