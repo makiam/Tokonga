@@ -489,6 +489,31 @@ Every new or substantially modified Java file **must** start with the project's 
 - **Best covered**: `StandardModules` (procedural), `Filters`, `Translators`
 - **CI**: builds on macOS, does NOT run tests — always test locally
 - **Test location**: each module's `src/test/java/`
+- **Checkstyle**: `./gradlew checkstyleTest` — configured in `buildSrc/aoi.java-conventions`. Only warnings are enforced (no errors).
+
+### ThemeManager in Tests
+
+`ThemeManager` is global, mutable GUI state. It **must** be initialized before any
+`EditingTool` subclass is constructed, because tool constructors call
+`ThemeManager.getToolButton()` which reads `selectedTheme.buttonClass`.
+
+**Initialization sequence:**
+1. `PluginRegistry.registerResource("UITheme", "default", classLoader, "artofillusion/Icons/defaultTheme.xml", null)`
+2. `ThemeManager.initThemes()` — parses registered UITheme resources, sets `selectedTheme` to the default theme.
+
+**Key gotchas:**
+- `initThemes()` throws `IllegalStateException` if called twice — not idempotent.
+- `registerResource()` throws `IllegalArgumentException` if the resource ID is already registered.
+- Both calls need **separate** try-catch blocks. Putting them in a single `try` means that if `registerResource` throws, `initThemes()` is skipped and `selectedTheme` stays null → NPE in every tool constructor.
+- Default theme XML lives in `default-theme-lib/src/main/resources/artofillusion/Icons/defaultTheme.xml`.
+
+**Test extension** (`artofillusion.test.util.SetupTheme`):
+A JUnit 5 `BeforeAllCallback` that registers the default theme and calls `initThemes()`
+with proper once-per-JVM guards. Any test class that constructs `EditingTool` subclasses
+**must** include `SetupTheme.class` in `@ExtendWith`.
+
+**Other test utilities** in `artofillusion.test.util`: `SetupLocale`, `SetupLookAndFeel`,
+`RegisterTestResources` (translates bundles), `SetupTheme`.
 
 ---
 
