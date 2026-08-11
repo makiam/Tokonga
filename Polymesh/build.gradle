@@ -11,9 +11,9 @@ configurations {
 
 dependencies {
     implementation project(':Translators')
-    implementation("org.greenrobot:eventbus-java:3.3.1")
-    implementation group: 'com.googlecode.matrix-toolkits-java', name: 'mtj', version: '0.9.14'
-    fatjar group: 'com.googlecode.matrix-toolkits-java', name: 'mtj', version: '0.9.14'
+    implementation libs.eventbus
+    implementation libs.mtj
+    fatjar libs.mtj
 }
 
 jar {

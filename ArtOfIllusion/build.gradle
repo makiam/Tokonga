@@ -35,7 +35,7 @@ dependencies {
         exclude group: "io.github.x-stream"
     }
 
-    implementation("org.greenrobot:eventbus-java:3.3.1")
+    implementation libs.eventbus
 
     implementation libs.bundles.jogl
 

@@ -59,10 +59,7 @@ dependencies {
 
     implementation libs.buoy
 
-    testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
-    testImplementation("org.junit.platform:junit-platform-suite:6.0.3")
-
-    testImplementation group: 'org.netbeans', name: 'jemmy', version: '2.2.7.5'
+    testImplementation libs.bundles.testing
 
     implementation libs.bundles.logging
     compileOnly libs.jspecify
