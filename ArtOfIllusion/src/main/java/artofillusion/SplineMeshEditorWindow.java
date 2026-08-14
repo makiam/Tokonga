@@ -141,8 +141,8 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
         meshMenu.add(meshMenuItem[7] = Translate.menuItem("smoothness", event -> setSmoothnessCommand()));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
         smoothItem = new BCheckBoxMenuItem[2];
-        smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("interpolating", this, "smoothingChanged", obj.getSmoothingMethod() == TriangleMesh.INTERPOLATING));
-        smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("approximating", this, "smoothingChanged", obj.getSmoothingMethod() == TriangleMesh.APPROXIMATING));
+        smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("interpolating", e -> setSmoothingMethod(Mesh.INTERPOLATING), obj.getSmoothingMethod() == TriangleMesh.INTERPOLATING));
+        smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("approximating", e -> setSmoothingMethod(Mesh.APPROXIMATING), obj.getSmoothingMethod() == TriangleMesh.APPROXIMATING));
         closedMenu = Translate.menu("closed");
         if (topology) {
             meshMenu.add(closedMenu);
@@ -550,15 +550,6 @@ public class SplineMeshEditorWindow extends MeshEditorWindow implements EditingW
 
     private void freehandModeChanged() {
         setFreehand((((BCheckBoxMenuItem) editMenuItem[3]).getState()));
-    }
-
-    private void smoothingChanged(CommandEvent ev) {
-        Object source = ev.getWidget();
-        for (int i = 0; i < smoothItem.length; i++) {
-            if (source == smoothItem[i]) {
-                setSmoothingMethod(i + 2);
-            }
-        }
     }
 
     private void closedTypeChanged(CommandEvent ev) {

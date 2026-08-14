@@ -17,6 +17,7 @@ import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
 
+import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -99,12 +100,19 @@ public class TubeEditorWindow extends CurveEditorWindow {
         meshMenu.add(meshMenuItem[7] = Translate.menuItem("smoothness",  event -> setSmoothnessCommand()));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
         smoothItem = new BCheckBoxMenuItem[3];
-        smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", this, "smoothingChanged", obj.getSmoothingMethod() == Mesh.NO_SMOOTHING));
-        smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("interpolating", this, "smoothingChanged", obj.getSmoothingMethod() == Mesh.INTERPOLATING));
-        smoothMenu.add(smoothItem[2] = Translate.checkboxMenuItem("approximating", this, "smoothingChanged", obj.getSmoothingMethod() == Mesh.APPROXIMATING));
+        smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none",
+                e ->  setSmoothingMethod(Mesh.NO_SMOOTHING),
+                obj.getSmoothingMethod() == Mesh.NO_SMOOTHING));
+        smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("interpolating",
+                e ->  setSmoothingMethod(Mesh.INTERPOLATING),
+                obj.getSmoothingMethod() == Mesh.INTERPOLATING));
+        smoothMenu.add(smoothItem[2] = Translate.checkboxMenuItem("approximating",
+                e ->  setSmoothingMethod(Mesh.APPROXIMATING),
+                obj.getSmoothingMethod() == Mesh.APPROXIMATING));
         endsItem = new BCheckBoxMenuItem[3];
         BMenu endsMenu = Translate.menu("endsStyle");
         meshMenu.add(endsMenu);
+
         endsMenu.add(endsItem[0] = Translate.checkboxMenuItem("openEnds", this, "endsStyleChanged", obj.getEndsStyle() == Tube.OPEN_ENDS));
         endsMenu.add(endsItem[1] = Translate.checkboxMenuItem("closedEnds", this, "endsStyleChanged", obj.getEndsStyle() == Tube.CLOSED_ENDS));
         endsMenu.add(endsItem[2] = Translate.checkboxMenuItem("flatEnds", this, "endsStyleChanged", obj.getEndsStyle() == Tube.FLAT_ENDS));
@@ -115,8 +123,8 @@ public class TubeEditorWindow extends CurveEditorWindow {
         BMenu menu = Translate.menu("show");
         MeshViewer view = (MeshViewer) theView[currentView];
         showItem = new BCheckBoxMenuItem[4];
-        menu.add(showItem[0] = Translate.checkboxMenuItem("curve", this, "shownItemChanged", view.getMeshVisible()));
-        menu.add(showItem[1] = Translate.checkboxMenuItem("surface", this, "shownItemChanged", view.getSurfaceVisible()));
+        menu.add(showItem[0] = Translate.checkboxMenuItem("curve", e -> shownItemChanged(e), view.getMeshVisible()));
+        menu.add(showItem[1] = Translate.checkboxMenuItem("surface", e -> shownItemChanged(e), view.getSurfaceVisible()));
         menu.add(showItem[3] = Translate.checkboxMenuItem("entireScene", this::toggleSceneVisible, view.getSceneVisible()));
         return menu;
     }

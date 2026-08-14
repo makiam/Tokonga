@@ -47,11 +47,15 @@ public final class PrimitivesMenu extends BMenu {
                 menuItem.setText(item.getName());
                 this.add(menuItem);
             });
-            if(!items.isEmpty()) this.addSeparator();
+            if (!items.isEmpty()) {
+                this.addSeparator();
+            }
         });
 
-        if(this.getChildren().isEmpty()) return;
-        this.remove((Widget)this.getChild(this.getChildCount()-1));
+        if (this.getChildren().isEmpty()) {
+            return;
+        }
+        this.remove((Widget) this.getChild(this.getChildCount() - 1));
     }
 
     @Override
@@ -62,7 +66,7 @@ public final class PrimitivesMenu extends BMenu {
     private class PrimitiveAction extends AbstractAction {
 
         private final PrimitiveFactory provider;
-        public PrimitiveAction(PrimitiveFactory provider) {
+        PrimitiveAction(PrimitiveFactory provider) {
             super();
             this.provider = provider;
         }
@@ -85,7 +89,7 @@ public final class PrimitivesMenu extends BMenu {
             int sel[] = layout.getSelectedIndices();
             layout.addObject(info, undo);
             undo.addCommand(UndoRecord.SET_SCENE_SELECTION, sel);
-            layout.setSelection(layout.getScene().getNumObjects()-1);
+            layout.setSelection(layout.getScene().getNumObjects() - 1);
             layout.setUndoRecord(undo);
             layout.updateImage();
         }

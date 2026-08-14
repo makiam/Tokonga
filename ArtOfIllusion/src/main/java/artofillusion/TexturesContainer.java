@@ -11,7 +11,6 @@
 package artofillusion;
 
 import artofillusion.texture.Texture;
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.Collections;
 import java.util.List;
@@ -94,7 +93,9 @@ sealed interface TexturesContainer permits Scene {
     default Texture getTexture(String name) {
         var scene = (Scene) this;
         for (var texture : scene.textures) {
-            if (texture.getName().equals(name)) return texture;
+            if (texture.getName().equals(name)) {
+                return texture;
+            }
         }
         return null;
     }

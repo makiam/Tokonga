@@ -222,10 +222,10 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         meshMenu.add(meshMenuItem[11] = Translate.menuItem("smoothness",  event -> setSmoothnessCommand()));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
         smoothItem = new BCheckBoxMenuItem[4];
-        smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", this, "smoothingChanged", obj.getSmoothingMethod() == TriangleMesh.NO_SMOOTHING));
-        smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("shading", this, "smoothingChanged", obj.getSmoothingMethod() == TriangleMesh.SMOOTH_SHADING));
-        smoothMenu.add(smoothItem[2] = Translate.checkboxMenuItem("interpolating", this, "smoothingChanged", obj.getSmoothingMethod() == TriangleMesh.INTERPOLATING));
-        smoothMenu.add(smoothItem[3] = Translate.checkboxMenuItem("approximating", this, "smoothingChanged", obj.getSmoothingMethod() == TriangleMesh.APPROXIMATING));
+        smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", e ->  setSmoothingMethod(Mesh.NO_SMOOTHING), obj.getSmoothingMethod() == TriangleMesh.NO_SMOOTHING));
+        smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("shading", e ->  setSmoothingMethod(Mesh.SMOOTH_SHADING), obj.getSmoothingMethod() == TriangleMesh.SMOOTH_SHADING));
+        smoothMenu.add(smoothItem[2] = Translate.checkboxMenuItem("interpolating", e ->  setSmoothingMethod(Mesh.INTERPOLATING), obj.getSmoothingMethod() == TriangleMesh.INTERPOLATING));
+        smoothMenu.add(smoothItem[3] = Translate.checkboxMenuItem("approximating", e ->  setSmoothingMethod(Mesh.APPROXIMATING), obj.getSmoothingMethod() == TriangleMesh.APPROXIMATING));
         if (topology) {
             meshMenu.add(Translate.menuItem("invertNormals", event -> reverseNormalsCommand()));
         }
@@ -1107,15 +1107,6 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
         updateImage();
     }
 
-    private void smoothingChanged(CommandEvent ev) {
-        Object source = ev.getWidget();
-        for (int i = 0; i < smoothItem.length; i++) {
-            if (source == smoothItem[i]) {
-                setSmoothingMethod(i);
-            }
-        }
-    }
-
     private void skeletonDetachedChanged() {
         for (var viewerCanvas : theView) {
             ((TriMeshViewer) viewerCanvas).setSkeletonDetached(((BCheckBoxMenuItem) skeletonMenuItem[6]).getState());
@@ -1421,7 +1412,9 @@ public class TriMeshEditorWindow extends MeshEditorWindow implements EditingWind
             }
         }
         for (boolean b: deleteFace) {
-            if (b) continue;
+            if (b) {
+                continue;
+            }
             newFaceCount++;
         }
         Vertex[] v = new Vertex[newVertCount];

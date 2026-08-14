@@ -23,10 +23,10 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.xml.sax.SAXException;
+
 
 import javax.swing.*;
-import javax.xml.parsers.ParserConfigurationException;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -187,8 +187,8 @@ public class ThemeManager {
                 }
 
                 // Parse the button styles for this theme
-                for(var sa: btn.getStyles()) {
-                    if(buttonStyles == null) {
+                for (var sa : btn.getStyles()) {
+                    if (buttonStyles == null) {
                         buttonStyles = new ButtonStyle(sa);
                         continue;
                     }
@@ -238,7 +238,7 @@ public class ThemeManager {
         public ButtonStyle(StyleAttribute sa) {
             this.attributes.putAll(sa.getAttributes());
 
-            if(attributes.containsKey("owner")) {
+            if (attributes.containsKey("owner")) {
                 try {
                     ownerType = ArtOfIllusion.getClass(attributes.get("owner"));
                 } catch (ClassNotFoundException ex) {
@@ -246,7 +246,7 @@ public class ThemeManager {
                 }
             }
 
-            if(attributes.containsKey("size")) {
+            if (attributes.containsKey("size")) {
                 var value = attributes.get("size");
                 int cut = value.indexOf(',');
                 if (cut >= 0) {
@@ -262,7 +262,7 @@ public class ThemeManager {
          * Add new ButtonStyle to this ButtonStyle.
          */
         protected void add(ButtonStyle style){
-            if(next == null) {
+            if (next == null) {
                 next = style;
             } else {
                 next.add(style);
@@ -650,7 +650,7 @@ public class ThemeManager {
      * Returns the ButtonStyle for the current Theme and the specified owner.
      */
     public static ButtonStyle getButtonStyle(Object owner) {
-        return selectedTheme.buttonStyles == null ? null: selectedTheme.buttonStyles.getStyle(owner);
+        return selectedTheme.buttonStyles == null ? null : selectedTheme.buttonStyles.getStyle(owner);
     }
 
 }

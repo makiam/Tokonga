@@ -23,23 +23,23 @@
 
  /*
  * History:
- *   V1.2	NTJ, Jan 2009.
- *		- Fixed NullPointerException when searchlist was empty.
- *		- Added support for findLibrary()
+ *   V1.2   NTJ, Jan 2009.
+ *  Fixed NullPointerException when searchlist was empty.
+ *  Added support for findLibrary()
  *
- *   V1.1	NTJ, Aug 2007.
- *		- Reworked the searchlist storage, and moved searchlist
- *		  traversal into a new method: getLoader(int, byte).
- *		  -- traversal should be somewhat faster; searchMode can be
- *		     changed even after ClassLoaders have been added;
- *		- Reworked findClass(name) so that all classes located
- *		  through shared loaders are associated with the shared
- *		  loader, and all classes located through non-shared loaders
- *		  are associated with the owning SearchlistClassLoader.
- *		- removed 'recent' loader code.
+ *   V1.1   NTJ, Aug 2007.
+ *  Reworked the searchlist storage, and moved searchlist
+ *  traversal into a new method: getLoader(int, byte).
+ *  -- traversal should be somewhat faster; searchMode can be
+ *     changed even after ClassLoaders have been added;
+ *  Reworked findClass(name) so that all classes located
+ *  through shared loaders are associated with the shared
+ *  loader, and all classes located through non-shared loaders
+ *  are associated with the owning SearchlistClassLoader.
+ *  removed 'recent' loader code.
  *
- *  V1.0	NTJ, April 2007.
- *		- Initial coding, based on a RemoteClassLoader used in AOS.
+ *  V1.0    NTJ, April 2007.
+ *  Initial coding, based on a RemoteClassLoader used in AOS.
  */
 package artofillusion.util;
 
@@ -258,8 +258,8 @@ public class SearchlistClassLoader extends ClassLoader {
                 // for shared loaders - just try getting the class
                 if (ldr.isShared()) {
                     return ldr.getLoader().loadClass(name);
-                } // for non-shared loaders, we have to define the class manually
-                else {
+                } else {
+                    // for non-shared loaders, we have to define the class manually
                     // check the cache first
                     result = cache == null ? null : cache.get(name);
                     if (result != null) {
@@ -355,7 +355,9 @@ public class SearchlistClassLoader extends ClassLoader {
                 urls = null;
             }
 
-            if (urls == null) continue;
+            if (urls == null) {
+                continue;
+            }
 
             for (URL url: urls) {
                 if (!url.getProtocol().equalsIgnoreCase("file")) {
@@ -390,8 +392,7 @@ public class SearchlistClassLoader extends ClassLoader {
      */
     protected Loader getLoader(int index) {
         // content is always the first loader searched
-        if(content == null) {
-        } else {
+        if (content != null) {
             if (index == 0) {
                 return content;
             } else {
@@ -415,7 +416,7 @@ public class SearchlistClassLoader extends ClassLoader {
      */
     protected byte[] loadClassData(ClassLoader cl, String name) {
 
-        try(InputStream is = cl.getResourceAsStream(name.replace(".", "/") + ".class")) {
+        try (InputStream is = cl.getResourceAsStream(name.replace(".", "/") + ".class")) {
             return is == null ? null : is.readAllBytes();
         } catch (IOException ioe) {
             log.atError().log("Error reading class data: {}", ioe.getMessage());
@@ -435,10 +436,10 @@ public class SearchlistClassLoader extends ClassLoader {
             return owner;
         }
 
-        private final ClassLoader owner;		// the actual classloader
+        private final ClassLoader owner; // the actual classloader
 
         @Getter
-        private boolean shared;			// shared flag
+        private boolean shared; // shared flag
 
         Loader(ClassLoader loader, boolean shared) {
             log.atInfo().log("Creating Loader for {} shared={}", loader, Boolean.toString(shared));

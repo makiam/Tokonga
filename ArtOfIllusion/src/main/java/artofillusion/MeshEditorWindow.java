@@ -19,6 +19,7 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,6 +31,7 @@ import java.util.List;
  * The MeshEditorWindow class represents the window for editing Mesh objects. This is an
  * abstract class, with subclasses for various types of objects.
  */
+@Slf4j
 public abstract class MeshEditorWindow extends ObjectEditorWindow implements MeshEditController, EditingWindow {
 
     protected Mesh oldMesh;
@@ -102,12 +104,24 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         displayItem = new BCheckBoxMenuItem[6];
         MeshViewer view = (MeshViewer) theView[currentView];
 
-        displayMenu.add(displayItem[0] = Translate.checkboxMenuItem("wireframeDisplay", event -> setViewMode(ViewerCanvas.RENDER_WIREFRAME), view.getRenderMode() == ViewerCanvas.RENDER_WIREFRAME));
-        displayMenu.add(displayItem[1] = Translate.checkboxMenuItem("shadedDisplay", event -> setViewMode(ViewerCanvas.RENDER_FLAT), view.getRenderMode() == ViewerCanvas.RENDER_FLAT));
-        displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay", event -> setViewMode(ViewerCanvas.RENDER_SMOOTH), view.getRenderMode() == ViewerCanvas.RENDER_SMOOTH));
-        displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay", event -> setViewMode(ViewerCanvas.RENDER_TEXTURED), view.getRenderMode() == ViewerCanvas.RENDER_TEXTURED));
-        displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay", event -> setViewMode(ViewerCanvas.RENDER_TRANSPARENT), view.getRenderMode() == ViewerCanvas.RENDER_TRANSPARENT));
-        displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay", event -> setViewMode(ViewerCanvas.RENDER_RENDERED), view.getRenderMode() == ViewerCanvas.RENDER_RENDERED));
+        displayMenu.add(displayItem[0] = Translate.checkboxMenuItem("wireframeDisplay",
+                event -> setViewMode(ViewerCanvas.RENDER_WIREFRAME),
+                view.getRenderMode() == ViewerCanvas.RENDER_WIREFRAME));
+        displayMenu.add(displayItem[1] = Translate.checkboxMenuItem("shadedDisplay",
+                event -> setViewMode(ViewerCanvas.RENDER_FLAT),
+                view.getRenderMode() == ViewerCanvas.RENDER_FLAT));
+        displayMenu.add(displayItem[2] = Translate.checkboxMenuItem("smoothDisplay",
+                event -> setViewMode(ViewerCanvas.RENDER_SMOOTH),
+                view.getRenderMode() == ViewerCanvas.RENDER_SMOOTH));
+        displayMenu.add(displayItem[3] = Translate.checkboxMenuItem("texturedDisplay",
+                event -> setViewMode(ViewerCanvas.RENDER_TEXTURED),
+                view.getRenderMode() == ViewerCanvas.RENDER_TEXTURED));
+        displayMenu.add(displayItem[4] = Translate.checkboxMenuItem("transparentDisplay",
+                event -> setViewMode(ViewerCanvas.RENDER_TRANSPARENT),
+                view.getRenderMode() == ViewerCanvas.RENDER_TRANSPARENT));
+        displayMenu.add(displayItem[5] = Translate.checkboxMenuItem("renderedDisplay",
+                event -> setViewMode(ViewerCanvas.RENDER_RENDERED),
+                view.getRenderMode() == ViewerCanvas.RENDER_RENDERED));
 
         for (var di : displayItem) {
             displayModesGroup.add(di.getComponent());
@@ -119,8 +133,14 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         viewMenu.add(createShowMenu());
         viewMenu.add(coordsMenu = Translate.menu("coordinateSystem"));
         coordsItem = new BCheckBoxMenuItem[2];
-        coordsMenu.add(coordsItem[0] = Translate.checkboxMenuItem("localCoords", this, "coordinateSystemChanged", !view.getUseWorldCoords()));
-        coordsMenu.add(coordsItem[1] = Translate.checkboxMenuItem("sceneCoords", this, "coordinateSystemChanged", view.getUseWorldCoords()));
+        var csg = new ButtonGroup();
+        var csl = Translate.checkboxMenuItem("localCoords", e -> setCoordinateSystemLocal(), !view.getUseWorldCoords());
+        var csw = Translate.checkboxMenuItem("sceneCoords", e -> setCoordinateSystemWorld(), view.getUseWorldCoords());
+        coordsMenu.add(csl);
+        coordsMenu.add(csw);
+        csg.add(csl.getComponent());
+        csg.add(csw.getComponent());
+
         viewMenu.add(splitViewItem = Translate.menuItem(numViewsShown == 1 ? "fourViews" : "oneView", event -> toggleViewsCommand()));
         viewMenu.add(Translate.menuItem("grid", event -> setGridCommand()));
         viewMenu.add(axesItem = Translate.menuItem(view.getShowAxes() ? "hideCoordinateAxes" : "showCoordinateAxes", event -> showAxesCommand()));
@@ -136,9 +156,9 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         BMenu menu = Translate.menu("show");
         showItem = new BCheckBoxMenuItem[4];
         MeshViewer view = (MeshViewer) theView[currentView];
-        menu.add(showItem[0] = Translate.checkboxMenuItem("controlMesh", this, "shownItemChanged", view.getMeshVisible()));
-        menu.add(showItem[1] = Translate.checkboxMenuItem("surface", this, "shownItemChanged", view.getSurfaceVisible()));
-        menu.add(showItem[2] = Translate.checkboxMenuItem("skeleton", this, "shownItemChanged", view.getSkeletonVisible()));
+        menu.add(showItem[0] = Translate.checkboxMenuItem("controlMesh", e -> shownItemChanged(e), view.getMeshVisible()));
+        menu.add(showItem[1] = Translate.checkboxMenuItem("surface", e -> shownItemChanged(e), view.getSurfaceVisible()));
+        menu.add(showItem[2] = Translate.checkboxMenuItem("skeleton", e -> shownItemChanged(e), view.getSkeletonVisible()));
         menu.add(showItem[3] = Translate.checkboxMenuItem("entireScene", this::toggleSceneVisible, view.getSceneVisible()));
         return menu;
     }
@@ -297,13 +317,17 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         savePreferences();
     }
 
-
-    private void coordinateSystemChanged(WidgetEvent ev) {
-        Widget source = ev.getWidget();
-        for (var bCheckBoxMenuItem : coordsItem) {
-            bCheckBoxMenuItem.setState(source == bCheckBoxMenuItem);
+    protected void setCoordinateSystemLocal() {
+        lastUseWorldCoords = false;
+        for (var viewerCanvas : theView) {
+            ((MeshViewer) viewerCanvas).setUseWorldCoords(lastUseWorldCoords);
         }
-        lastUseWorldCoords = source == coordsItem[1];
+        savePreferences();
+        updateImage();
+    }
+
+    protected void setCoordinateSystemWorld() {
+        lastUseWorldCoords = true;
         for (var viewerCanvas : theView) {
             ((MeshViewer) viewerCanvas).setUseWorldCoords(lastUseWorldCoords);
         }
@@ -319,14 +343,15 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         updateImage();
     }
 
-    private void shownItemChanged(WidgetEvent ev) {
-        Widget source = ev.getWidget();
+    protected final void shownItemChanged(ActionEvent event) {
+        var source = (JCheckBoxMenuItem) event.getSource();
+
         MeshViewer view = (MeshViewer) theView[currentView];
-        if (source == showItem[0]) {
+        if (showItem[0].getComponent() == source) {
             view.setMeshVisible(lastShowMesh[currentView] = showItem[0].getState());
-        } else if (source == showItem[1]) {
+        } else if (showItem[1].getComponent() == source) {
             view.setSurfaceVisible(lastShowSurface[currentView] = showItem[1].getState());
-        } else if (source == showItem[2]) {
+        } else if (showItem[2].getComponent() == source) {
             view.setSkeletonVisible(lastShowSkeleton[currentView] = showItem[2].getState());
         }
 
@@ -334,7 +359,7 @@ public abstract class MeshEditorWindow extends ObjectEditorWindow implements Mes
         updateImage();
     }
 
-    private void surfaceColoringChanged(WidgetEvent ev) {
+    protected final void surfaceColoringChanged(WidgetEvent ev) {
         Widget source = ev.getWidget();
         MeshViewer view = (MeshViewer) theView[currentView];
         for (int i = 0; i < colorSurfaceItem.length; i++) {
