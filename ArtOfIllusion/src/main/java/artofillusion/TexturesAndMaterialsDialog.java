@@ -352,7 +352,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
                     Material mat = materialTypes.get(newType - textureTypes.size()).getClass().getDeclaredConstructor().newInstance();
                     mat.setName(name);
                     theScene.addMaterial(mat);
-                    mat.edit((WindowWidget)parentFrame.getFrame(), theScene);
+                    mat.edit(parentFrame.getFrame(), theScene);
                 } catch (Exception ex) {
                 }
                 parentFrame.setModified();
@@ -418,7 +418,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
             parentFrame.setModified();
         } else if (selectedMaterial != null) {
             Material mat = selectedMaterial;
-            mat.edit((WindowWidget)parentFrame.getFrame(), theScene);
+            mat.edit(parentFrame.getFrame(), theScene);
             mat.assignNewID();
             theScene.changeMaterial(theScene.indexOf(mat));
             parentFrame.setModified();
@@ -434,7 +434,9 @@ public class TexturesAndMaterialsDialog extends BDialog {
             parentFrame.setModified();
 
             selectedScene.getImages().forEach(image -> {
-                if(selectedTexture.usesImage(image)) theScene.addImage(image);
+                if (selectedTexture.usesImage(image)) {
+                    theScene.addImage(image);
+                }
             });
 
             parentFrame.updateImage();
@@ -445,7 +447,9 @@ public class TexturesAndMaterialsDialog extends BDialog {
             parentFrame.setModified();
 
             selectedScene.getImages().forEach(image -> {
-                if(selectedMaterial.usesImage(image)) theScene.addImage(image);
+                if (selectedMaterial.usesImage(image)) {
+                    theScene.addImage(image);
+                }
             });
 
             parentFrame.updateImage();
@@ -466,7 +470,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
             var chooser = new JFileChooser();
             chooser.setName(Translate.text(itemText));
             chooser.setCurrentDirectory(assetsFolder);
-            
+
             if (chooser.showOpenDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
                 saveToFile(chooser.getSelectedFile());
             }
@@ -481,7 +485,9 @@ public class TexturesAndMaterialsDialog extends BDialog {
                     Texture newTexture = selectedTexture.duplicate();
                     saveScene.addTexture(newTexture, insertLocation == -1 ? saveScene.getNumTextures() : insertLocation);
                     selectedScene.getImages().forEach(image -> {
-                        if(selectedTexture.usesImage(image)) saveScene.addImage(image);
+                        if (selectedTexture.usesImage(image)) {
+                            saveScene.addImage(image);
+                        }
                     });
 
                     saveScene.writeToFile(saveFile);
@@ -489,7 +495,9 @@ public class TexturesAndMaterialsDialog extends BDialog {
                     Material newMaterial = selectedMaterial.duplicate();
                     saveScene.addMaterial(newMaterial, insertLocation == -1 ? saveScene.getNumMaterials() : insertLocation);
                     selectedScene.getImages().forEach(image -> {
-                        if(selectedMaterial.usesImage(image)) saveScene.addImage(image);
+                        if (selectedMaterial.usesImage(image)) {
+                            saveScene.addImage(image);
+                        }
                     });
                     saveScene.writeToFile(saveFile);
                 }
@@ -555,7 +563,7 @@ public class TexturesAndMaterialsDialog extends BDialog {
         var chooser = new JFileChooser();
         chooser.setName(Translate.text("selectNewLibraryName"));
         chooser.setCurrentDirectory(assetsFolder);
-        
+
         if (chooser.showSaveDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
             File saveFile = chooser.getSelectedFile();
             if (saveFile.exists()) {

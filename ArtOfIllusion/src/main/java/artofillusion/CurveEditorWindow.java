@@ -128,9 +128,9 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
         meshMenu.add(meshMenuItem[5] = Translate.menuItem("smoothness", event -> setSmoothnessCommand()));
         meshMenu.add(smoothMenu = Translate.menu("smoothingMethod"));
         smoothItem = new BCheckBoxMenuItem[3];
-        smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", this, "smoothingChanged", obj.getSmoothingMethod() == Curve.NO_SMOOTHING));
-        smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("interpolating", this, "smoothingChanged", obj.getSmoothingMethod() == Curve.INTERPOLATING));
-        smoothMenu.add(smoothItem[2] = Translate.checkboxMenuItem("approximating", this, "smoothingChanged", obj.getSmoothingMethod() == Curve.APPROXIMATING));
+        smoothMenu.add(smoothItem[0] = Translate.checkboxMenuItem("none", e ->  setSmoothingMethod(Mesh.NO_SMOOTHING), obj.getSmoothingMethod() == Curve.NO_SMOOTHING));
+        smoothMenu.add(smoothItem[1] = Translate.checkboxMenuItem("interpolating", e ->  setSmoothingMethod(Mesh.INTERPOLATING), obj.getSmoothingMethod() == Curve.INTERPOLATING));
+        smoothMenu.add(smoothItem[2] = Translate.checkboxMenuItem("approximating", e ->  setSmoothingMethod(Mesh.APPROXIMATING), obj.getSmoothingMethod() == Curve.APPROXIMATING));
         meshMenu.add(meshMenuItem[6] = Translate.menuItem("closedEnds", this::toggleClosedCommand));
         if (obj.isClosed()) {
             meshMenuItem[6].setText(Translate.text("menu.openEnds"));
@@ -141,7 +141,7 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
     protected BMenu createShowMenu() {
         BMenu menu = Translate.menu("show");
         showItem = new BCheckBoxMenuItem[4];
-        menu.add(showItem[0] = Translate.checkboxMenuItem("curve", this, "shownItemChanged", true));
+        menu.add(showItem[0] = Translate.checkboxMenuItem("curve", e -> shownItemChanged(e), true));
         menu.add(showItem[3] = Translate.checkboxMenuItem("entireScene", this::toggleSceneVisible, ((MeshViewer) theView[currentView]).getSceneVisible()));
         return menu;
     }
@@ -295,17 +295,6 @@ public class CurveEditorWindow extends MeshEditorWindow implements EditingWindow
     protected void freehandModeChanged() {
         for (var viewerCanvas : theView) {
             ((CurveViewer) viewerCanvas).setFreehandSelection(((BCheckBoxMenuItem) editMenuItem[3]).getState());
-        }
-    }
-
-    private void smoothingChanged(CommandEvent ev) {
-        Widget source = ev.getWidget();
-        if (source == smoothItem[0]) {
-            setSmoothingMethod(Mesh.NO_SMOOTHING);
-        } else if (source == smoothItem[1]) {
-            setSmoothingMethod(Mesh.INTERPOLATING);
-        } else if (source == smoothItem[2]) {
-            setSmoothingMethod(Mesh.APPROXIMATING);
         }
     }
 

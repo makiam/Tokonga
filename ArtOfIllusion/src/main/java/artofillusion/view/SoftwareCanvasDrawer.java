@@ -155,8 +155,8 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
 
         for (i = 0; i < bounds.height; i++, index1 += bounds.width, index2 += bounds.width) {
             pixel[index1] = pixel[index2] = black;
-            if (drawFocus) //pixel[index1+1] = pixel[index2-1] = line;
-            {
+            if (drawFocus) {
+                //pixel[index1+1] = pixel[index2-1] = line;
                 pixel[index1 + 1] = pixel[index2 - 1] = Color.GRAY.getRGB();
             }
         }
@@ -689,7 +689,7 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
             if (z[v1] < clip || z[v2] < clip || z[v3] < clip) {
                 Vec2[] clipPos = clipTriangle(vert[v1], vert[v2], vert[v3], z[v1], z[v2], z[v3], cam, clipz);
                 boolean inside = true;
-                for(Vec2 clipPo: clipPos) {
+                for (Vec2 clipPo : clipPos) {
                     if (clipPo.x < -32767.0 || clipPo.x > 32767.0 || clipPo.y < -32767.0 || clipPo.y > 32767.0) {
                         inside = false;
                     }
@@ -758,7 +758,7 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
                 if (needClipping) {
                     Vec2[] clipPos = clipTriangle(vert[v1], vert[v2], vert[v3], z[v1], z[v2], z[v3], cam, clipz);
                     boolean inside = true;
-                    for(Vec2 clipPo: clipPos) {
+                    for (Vec2 clipPo : clipPos) {
                         if (clipPo.x < -32767.0 || clipPo.x > 32767.0 || clipPo.y < -32767.0 || clipPo.y > 32767.0) {
                             inside = false;
                         }
@@ -779,7 +779,7 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
             if (needClipping) {
                 Vec2[] clipPos = clipSmoothTriangle(vert[v1], vert[v2], vert[v3], z[v1], z[v2], z[v3], cam, color1, color2, color3, color4, color5, color6, color7, clipz);
                 boolean inside = true;
-                for(Vec2 clipPo: clipPos) {
+                for (Vec2 clipPo : clipPos) {
                     if (clipPo.x < -32767.0 || clipPo.x > 32767.0 || clipPo.y < -32767.0 || clipPo.y > 32767.0) {
                         inside = false;
                     }
