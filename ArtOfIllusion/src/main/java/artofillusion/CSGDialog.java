@@ -1,13 +1,13 @@
 /* Copyright (C) 2001-2015 by Peter Eastman
    Modifications Copyright (C) 2019 by Petri Ihalainen
-   Changes copyright (C) 2025 by Maksim Khramov
+   Changes copyright (C) 2025-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion;
@@ -17,7 +17,11 @@ import artofillusion.texture.*;
 import artofillusion.ui.*;
 import buoy.event.*;
 import buoy.widget.*;
+
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -84,6 +88,9 @@ public class CSGDialog extends BDialog {
         buttons.add(Translate.button("ok", event -> doOk()));
         buttons.add(Translate.button("cancel", event -> dispose()));
         content.add(buttons, new LayoutInfo());
+        KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
+        ActionListener action = e -> dispose();
+        this.getComponent().getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
         this.getComponent().addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
