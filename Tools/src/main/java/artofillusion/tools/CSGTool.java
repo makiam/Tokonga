@@ -71,8 +71,7 @@ public class CSGTool implements ModellingTool {
             inputObj.get(1).setVisible(false);
         }
         ObjectInfo info = new ObjectInfo(newObj, new CoordinateSystem(center, Vec3.vz(), Vec3.vy()), "Boolean " + (counter++));
-        info.addTrack(new PositionTrack(info), 0);
-        info.addTrack(new RotationTrack(info), 1);
+
         window.addObject(info, null);
         window.setSelection(scene.getNumObjects() - 1);
         window.setUndoRecord(new UndoRecord(window, false, UndoRecord.DELETE_OBJECT, scene.getNumObjects() - 1));
