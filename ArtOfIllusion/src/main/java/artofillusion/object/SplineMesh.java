@@ -151,12 +151,12 @@ public class SplineMesh extends Object3D implements Mesh {
         if (vert == null && cachedWire != null) {
             WireframeMesh cached = cachedWire.get();
             if (cached != null) {
-                vert = cached.vert;
+                vert = cached.vert();
             }
-            vert = cached.vert;
+            vert = cached.vert();
         }
         if (vert == null) {
-            vert = getWireframeMesh().vert;
+            vert = getWireframeMesh().vert();
         }
 
         minx = maxx = vert[0].x;

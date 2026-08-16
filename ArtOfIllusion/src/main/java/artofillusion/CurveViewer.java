@@ -41,8 +41,8 @@ public class CurveViewer extends MeshViewer {
         MeshVertex[] v = ((Mesh) getController().getObject().getObject()).getVertices();
         boolean[] selected = controller.getSelection();
         WireframeMesh wireframe = getController().getObject().getObject().getWireframeMesh();
-        for (int i = 0; i < wireframe.from.length; i++) {
-            renderLine(wireframe.vert[wireframe.from[i]], wireframe.vert[wireframe.to[i]], theCamera, lineColor);
+        for (int i = 0; i < wireframe.from().length; i++) {
+            renderLine(wireframe.vert()[wireframe.from()[i]], wireframe.vert()[wireframe.to()[i]], theCamera, lineColor);
         }
 
         for (int i = 0; i < v.length; i++) {

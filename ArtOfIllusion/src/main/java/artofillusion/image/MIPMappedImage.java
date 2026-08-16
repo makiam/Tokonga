@@ -197,7 +197,7 @@ public class MIPMappedImage extends ImageMap {
      */
     private void countComponents(int[] data) {
         components = 1;
-        for(int j: data) {
+        for (int j : data) {
             if ((j & 0xFF000000) != 0xFF000000) {
                 components = 4;
                 return;
@@ -364,8 +364,8 @@ public class MIPMappedImage extends ImageMap {
      */
     @Override
     public float getAverageComponent(int component) {
-        if (components == 1 && component < 3) // Grayscale images need three components or the avrage appears red
-        {
+        // Grayscale images need three components or the average appears red
+        if (components == 1 && component < 3) {
             return average[0];
         }
         if (component >= components) {
@@ -710,8 +710,7 @@ public class MIPMappedImage extends ImageMap {
             }
             MemoryImageSource src = new MemoryImageSource(w, h, data, 0, w);
             im = Toolkit.getDefaultToolkit().createImage(src);
-        } else if (version == 1) // Up to AoI 3.0.3
-        {
+        } else if (version == 1) { // Up to AoI 3.0.3
             byte[] imageData = new byte[in.readInt()];
             in.readFully(imageData);
             im = ImageIO.read(new ByteArrayInputStream(imageData));

@@ -113,7 +113,7 @@ public class BendDistortion extends Distortion {
             double value;
             if (axis == X_AXIS) {
                 value = vec3.x;
-            } else if(axis == Y_AXIS) {
+            } else if (axis == Y_AXIS) {
                 value = vec3.y;
             } else {
                 value = vec3.z;

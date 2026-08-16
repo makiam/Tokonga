@@ -442,12 +442,12 @@ public class TriangleMesh extends Object3D implements FacetedMesh {
         if (vert == null && cachedWire != null) {
             WireframeMesh cached = cachedWire.get();
             if (cached != null) {
-                vert = cached.vert;
+                vert = cached.vert();
             }
-            vert = cached.vert;
+            vert = cached.vert();
         }
         if (vert == null) {
-            vert = getWireframeMesh().vert;
+            vert = getWireframeMesh().vert();
         }
         if (vert.length == 0) {
             minx = maxx = miny = maxy = minz = maxz = 0.0;

@@ -251,11 +251,11 @@ public class MeshPreviewer extends CustomWidget implements RenderListener {
         m = Mat4.translation(origin.x, origin.y, origin.z).times(m);
         theCamera.setObjectTransform(m);
         WireframeMesh mesh = info.object.getWireframeMesh();
-        int[] from = mesh.from;
-        int[] to = mesh.to;
+        int[] from = mesh.from();
+        int[] to = mesh.to();
         int last = -1;
-        Vec3[] vert = mesh.vert;
-        for (int i = 0; i < mesh.from.length; i++) {
+        Vec3[] vert = mesh.vert();
+        for (int i = 0; i < mesh.from().length; i++) {
             if (from[i] == last) {
                 theCamera.drawClippedLineTo(g, vert[(last = to[i])]);
             } else {

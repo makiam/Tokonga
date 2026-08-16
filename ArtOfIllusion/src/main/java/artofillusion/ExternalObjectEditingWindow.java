@@ -4,8 +4,8 @@
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion;
@@ -41,8 +41,9 @@ import org.greenrobot.eventbus.SubscriberExceptionEvent;
 
 @Slf4j
 public final class ExternalObjectEditingWindow extends JDialog {
+
     private final EditingWindow parent;
-    private final  ExternalObject obj;
+    private final ExternalObject obj;
     private final ObjectInfo info;
     private final Runnable closeCallback;
 
@@ -80,10 +81,8 @@ public final class ExternalObjectEditingWindow extends JDialog {
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         ActionListener action = e -> doClose();
         this.getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        
+
         runSceneTreeLoad(externalFile);
-
-
 
     }
 
@@ -205,8 +204,8 @@ public final class ExternalObjectEditingWindow extends JDialog {
         obj.setExternalObjectName(objectName);
         obj.reloadObject();
 
-        Optional.ofNullable(obj.getLoadingError()).ifPresent(action ->
-                MessageDialog.create().withOwner(this).error(UIUtilities.breakString(Translate.text("externalObject.loadingError", obj.getLoadingError())))
+        Optional.ofNullable(obj.getLoadingError()).ifPresent(action
+                -> MessageDialog.create().withOwner(this).error(UIUtilities.breakString(Translate.text("externalObject.loadingError", obj.getLoadingError())))
         );
         info.clearCachedMeshes();
         obj.sceneChanged(info, parent.getScene());
@@ -229,14 +228,16 @@ public final class ExternalObjectEditingWindow extends JDialog {
         // TODO add your handling code here:
         var chooser = new JFileChooser();
         chooser.setName(Translate.text("externalObject.selectScene"));
-        
+
         File f = obj.getExternalSceneFile();
         if (f.isFile()) {
             chooser.setSelectedFile(f);
         }
         if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             var cf = chooser.getSelectedFile().getAbsolutePath();
-            if(cf.equals(sourcePathField.getText())) return;
+            if (cf.equals(sourcePathField.getText())) {
+                return;
+            }
 
             this.objectId = 0;
             this.externalFile = chooser.getSelectedFile();
@@ -252,11 +253,11 @@ public final class ExternalObjectEditingWindow extends JDialog {
             var root = new DefaultMutableTreeNode("Invalid Scene: " + obj.getExternalSceneFile());
             var model = new DefaultTreeModel(root, false);
             this.sceneTree.setModel(model);
-            if(cause instanceof InvalidObjectException) {
+            if (cause instanceof InvalidObjectException) {
                 MessageDialog.create().withOwner(this).error(UIUtilities.breakString(Translate.text("errorLoadingWholeScene")));
                 return null;
             }
-            if(cause instanceof IOException) {
+            if (cause instanceof IOException) {
                 MessageDialog.create().withOwner(this).error(new String[]{Translate.text("errorLoadingFile"), cause.getMessage() == null ? "" : cause.getMessage()});
                 return null;
             }
@@ -264,8 +265,8 @@ public final class ExternalObjectEditingWindow extends JDialog {
             return null;
         });
     }
-    
-    
+
+
     private void sceneTreeValueChanged(javax.swing.event.TreeSelectionEvent evt) {//GEN-FIRST:event_sceneTreeValueChanged
         // TODO add your handling code here:
         var path = evt.getNewLeadSelectionPath();
@@ -273,8 +274,10 @@ public final class ExternalObjectEditingWindow extends JDialog {
             sceneTree.clearSelection();
         }
         okButton.setEnabled(sceneTree.getSelectionCount() != 0);
-        var selected = (SceneItemNode)sceneTree.getLastSelectedPathComponent();
-        if(selected == null) return;
+        var selected = (SceneItemNode) sceneTree.getLastSelectedPathComponent();
+        if (selected == null) {
+            return;
+        }
         objectId = selected.getUserObject().getId();
         objectName = selected.getUserObject().getName();
 
@@ -283,7 +286,7 @@ public final class ExternalObjectEditingWindow extends JDialog {
     private void sceneTreeMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_sceneTreeMouseClicked
         var near = sceneTree.getClosestPathForLocation(evt.getX(), evt.getY());
     }//GEN-LAST:event_sceneTreeMouseClicked
-    
+
     private void doClose() {
         setVisible(false);
         dispose();
@@ -299,13 +302,15 @@ public final class ExternalObjectEditingWindow extends JDialog {
         sourcePathField.setText(event.path.getAbsolutePath());
         DefaultTreeModel model = event.getModel();
         sceneTree.setModel(model);
-        if(objectId == 0) return;
+        if (objectId == 0) {
+            return;
+        }
 
-        var nodes = Collections.list(((DefaultMutableTreeNode)model.getRoot()).breadthFirstEnumeration());
+        var nodes = Collections.list(((DefaultMutableTreeNode) model.getRoot()).breadthFirstEnumeration());
 
         nodes.forEach(node -> {
-            if( node instanceof SceneItemNode sn) {
-                if(sn.getUserObject().getId() == objectId) {
+            if (node instanceof SceneItemNode sn) {
+                if (sn.getUserObject().getId() == objectId) {
                     sceneTree.setSelectionPath(new TreePath(sn.getPath()));
                 }
             }
@@ -321,10 +326,10 @@ public final class ExternalObjectEditingWindow extends JDialog {
     private javax.swing.JTextField sourcePathField;
     // End of variables declaration//GEN-END:variables
 
-
     @AllArgsConstructor
     @Data
     private class SceneModelTreeBuildEvent {
+
         private ExternalObjectEditingWindow owner;
         private File path;
         private DefaultTreeModel model;
@@ -335,8 +340,7 @@ public final class ExternalObjectEditingWindow extends JDialog {
         private final File path;
         private final ExternalObjectEditingWindow owner;
 
-
-        public SceneTreeBuilder(ExternalObjectEditingWindow owner, File path) {
+        SceneTreeBuilder(ExternalObjectEditingWindow owner, File path) {
             this.owner = owner;
             this.path = path;
         }

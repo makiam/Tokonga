@@ -4,8 +4,8 @@
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.image.ui;
@@ -50,7 +50,7 @@ public class ImageNameEditor extends javax.swing.JDialog {
     private String autoText, userText;
     private boolean automatic = false;
     private final ImageMap image;
-    
+
     /**
      * Creates new form ImageNameEditor
      * @param parent
@@ -75,7 +75,7 @@ public class ImageNameEditor extends javax.swing.JDialog {
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         ActionListener action = e -> doClose(RET_CANCEL);
         this.getRootPane().registerKeyboardAction(action, escape, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-        
+
         Rectangle pb = parent.getBounds();
         Rectangle tb = getBounds();
         setLocation(pb.x + (pb.width - tb.width) / 2, pb.y + (625 - tb.height));
@@ -209,13 +209,13 @@ public class ImageNameEditor extends javax.swing.JDialog {
             nameField.setText(userText);
         }
     }//GEN-LAST:event_autoBoxActionPerformed
-    
+
     private void textChanged() {
         if (!automatic) {
             userText = nameField.getText();
         }
     }
-    
+
     private void doClose(int retStatus) {
         returnStatus = retStatus;
         setVisible(false);

@@ -70,13 +70,13 @@ public class CreateCurveTool extends EditingTool {
         if (theCurve != null) {
             Mat4 trans = cam.getWorldToScreen().times(coords.fromLocal());
             WireframeMesh mesh = theCurve.getWireframeMesh();
-            Point[] p = new Point[mesh.vert.length];
+            Point[] p = new Point[mesh.vert().length];
             for (int i = 0; i < p.length; i++) {
-                Vec2 v = trans.timesXY(mesh.vert[i]);
+                Vec2 v = trans.timesXY(mesh.vert()[i]);
                 p[i] = new Point((int) v.x, (int) v.y);
             }
-            for (int i = 0; i < mesh.from.length; i++) {
-                view.drawLine(p[mesh.from[i]], p[mesh.to[i]], ViewerCanvas.lineColor);
+            for (int i = 0; i < mesh.from().length; i++) {
+                view.drawLine(p[mesh.from()[i]], p[mesh.to()[i]], ViewerCanvas.lineColor);
             }
         }
 

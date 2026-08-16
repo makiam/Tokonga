@@ -89,7 +89,7 @@ public class Curve extends Object3D implements Mesh {
         Vec3[] points;
 
         getWireframeMesh();
-        points = cachedWire.vert;
+        points = cachedWire.vert();
         minx = maxx = points[0].x;
         miny = maxy = points[0].y;
         minz = maxz = points[0].z;
