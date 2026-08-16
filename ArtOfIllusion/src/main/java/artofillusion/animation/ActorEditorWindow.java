@@ -341,7 +341,7 @@ public class ActorEditorWindow extends BDialog {
         public final Object3D editObject;
         public final int editID;
 
-        public EditCallback(Object3D obj, int id) {
+        EditCallback(Object3D obj, int id) {
             editObject = obj;
             editID = id;
         }
@@ -417,7 +417,7 @@ public class ActorEditorWindow extends BDialog {
 
         private final ValueSelector selector;
 
-        public ValueRenderer() {
+        ValueRenderer() {
             super(new ValueSelector(0.0, -Double.MAX_VALUE, Double.MAX_VALUE, 0.005));
             selector = (ValueSelector) getWidget();
         }
@@ -446,7 +446,7 @@ public class ActorEditorWindow extends BDialog {
         private final BuoyComponent component;
         private int currentRow;
 
-        public ValueEditor() {
+        ValueEditor() {
             selector = new ValueSelector(0.0, -Double.MAX_VALUE, Double.MAX_VALUE, 0.005);
             component = new BuoyComponent(selector) {
                 @Override

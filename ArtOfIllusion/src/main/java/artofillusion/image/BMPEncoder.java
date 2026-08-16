@@ -51,8 +51,8 @@ public class BMPEncoder {
         recordData();
         width = im.getWidth(null);
 
-        if (width == -1) // TODO(MB) Remove this hack.
-        {
+        // TODO(MB) Remove this hack.
+        if (width == -1) {
             try {
                 Thread.sleep(600);
             } catch (InterruptedException ex) {
@@ -73,7 +73,7 @@ public class BMPEncoder {
     }
 
     protected static void writeIA(DataOutputStream out, int[] data) throws IOException {
-        for(int datum: data) out.writeByte(datum);
+        for (int datum : data) out.writeByte(datum);
     }
 
     protected static int[] formatLittleEndian(int data) {

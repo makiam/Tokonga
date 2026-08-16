@@ -447,7 +447,7 @@ public class IKTrack extends Track<IKTrack> {
             Joint[] joint = skeleton.getJoints();
             BList jointList = new BList();
             for (Joint cj : joint) jointList.add(cj.name);
-            
+
             if (skeleton.findJointIndex(c.jointID) > -1) {
                 jointList.setSelected(skeleton.findJointIndex(c.jointID), true);
             }

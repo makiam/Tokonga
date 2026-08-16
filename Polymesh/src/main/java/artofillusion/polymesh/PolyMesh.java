@@ -2698,10 +2698,10 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         if (cachedMesh != null) {
             vert = cachedMesh.vert;
         } else if (cachedWire != null) {
-            vert = cachedWire.vert;
+            vert = cachedWire.vert();
         } else {
             getWireframeMesh();
-            vert = cachedWire.vert;
+            vert = cachedWire.vert();
         }
         minx = maxx = vert[0].x;
         miny = maxy = vert[0].y;

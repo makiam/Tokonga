@@ -388,9 +388,9 @@ public class CustomDistortionTrack extends Track<CustomDistortionTrack> implemen
         }
         parameter = newparams;
 
-        for(var keyframe: tc.getValues()) {
+        for (var keyframe : tc.getValues()) {
             double[] newval = new double[parameter.length];
-            for(int j = 0; j < newval.length; j++) {
+            for (int j = 0; j < newval.length; j++) {
                 if (index[j] > -1) {
                     newval[j] = ((ArrayKeyframe) keyframe).val[index[j]];
                 } else {

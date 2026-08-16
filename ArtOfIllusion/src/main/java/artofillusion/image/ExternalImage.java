@@ -5,8 +5,8 @@
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.image;
@@ -32,7 +32,7 @@ public class ExternalImage extends ImageMap {
     private String type, lastAbsolutePath, lastRelativePath;
     private File imageFile;
     private Image brokenImage;
-    
+
     // Connected is true if the last load from file was successful
     @Getter
     private boolean connected;
@@ -252,8 +252,8 @@ public class ExternalImage extends ImageMap {
                 file = new File(lastAbsolutePath);
             }
         }
-        if (!file.isFile() && !connected) // Refresh, when the file has not been loaded during this session causes error at load.
-        {
+        // Refresh, when the file has not been loaded during this session causes error at load.
+        if (!file.isFile() && !connected) {
             return;
         }
         try {

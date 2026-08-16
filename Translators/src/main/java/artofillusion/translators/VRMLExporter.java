@@ -358,7 +358,7 @@ public class VRMLExporter {
         } else if (obj instanceof Curve && !obj.canSetTexture()) {
             WireframeMesh mesh = obj.getWireframeMesh();
             if (mesh != null) {
-                Vec3[] vert = mesh.vert;
+                Vec3[] vert = mesh.vert();
 
                 write("Shape {", out, indent + 2);
                 write("geometry DEF " + name + " IndexedLineSet {", out, indent + 3);

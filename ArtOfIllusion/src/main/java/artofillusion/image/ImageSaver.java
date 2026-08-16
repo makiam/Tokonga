@@ -5,8 +5,8 @@
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 
 package artofillusion.image;
@@ -157,7 +157,7 @@ public class ImageSaver {
             index = (int) numberFromField.getValue();
             var chooser = new JFileChooser();
             chooser.setName(Translate.text("saveImage"));
-            
+
             String filename = "Untitled." + FORMAT_EXTENSION[format];
             File file = (ArtOfIllusion.getCurrentDirectory() == null ? new File(filename) : new File(ArtOfIllusion.getCurrentDirectory(), filename));
             chooser.setSelectedFile(file);

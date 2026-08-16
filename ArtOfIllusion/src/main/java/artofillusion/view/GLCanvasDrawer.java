@@ -449,18 +449,18 @@ public class GLCanvasDrawer implements CanvasDrawer {
         prepareView3D(cam);
         prepareDepthTest(true);
         prepareSolidColor(color);
-        prepareBuffers(mesh.vert.length * 3);
+        prepareBuffers(mesh.vert().length * 3);
         vertBuffer.clear();
-        for (int i = 0; i < mesh.vert.length; i++) {
-            Vec3 v = mesh.vert[i];
+        for (int i = 0; i < mesh.vert().length; i++) {
+            Vec3 v = mesh.vert()[i];
             vertBuffer.put((float) v.x);
             vertBuffer.put((float) v.y);
             vertBuffer.put((float) v.z);
         }
-        int[] vertexIndices = new int[mesh.from.length * 2];
-        for (int i = 0, j = 0; i < mesh.from.length; i++) {
-            vertexIndices[j++] = mesh.from[i];
-            vertexIndices[j++] = mesh.to[i];
+        int[] vertexIndices = new int[mesh.from().length * 2];
+        for (int i = 0, j = 0; i < mesh.from().length; i++) {
+            vertexIndices[j++] = mesh.from()[i];
+            vertexIndices[j++] = mesh.to()[i];
         }
         gl.glDrawElements(GL.GL_LINES, vertexIndices.length, GL.GL_UNSIGNED_INT, IntBuffer.wrap(vertexIndices));
     }
@@ -980,7 +980,7 @@ public class GLCanvasDrawer implements CanvasDrawer {
         /**
          * Create a GLImage from a regular Image object.
          */
-        public GLImage(Image image) throws InterruptedException {
+        GLImage(Image image) throws InterruptedException {
             width = image.getWidth(null);
             height = image.getHeight(null);
 
@@ -1014,7 +1014,7 @@ public class GLCanvasDrawer implements CanvasDrawer {
         /**
          * Create a GLTexture from a regular Image object.
          */
-        public GLTexture(Image image) throws InterruptedException {
+        GLTexture(Image image) throws InterruptedException {
             GLImage glImage = getCachedImage(image, true);
             width = glImage.width;
             height = glImage.height;

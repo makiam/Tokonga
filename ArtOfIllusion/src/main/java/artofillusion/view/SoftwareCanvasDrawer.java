@@ -633,9 +633,9 @@ public class SoftwareCanvasDrawer implements CanvasDrawer {
      */
     @Override
     public void renderWireframe(WireframeMesh mesh, Camera cam, Color color) {
-        Vec3[] vert = mesh.vert;
-        int[] from = mesh.from;
-        int[] to = mesh.to;
+        Vec3[] vert = mesh.vert();
+        int[] from = mesh.from();
+        int[] to = mesh.to();
         for (int i = 0; i < from.length; i++) {
             renderLine(vert[from[i]], vert[to[i]], cam, color);
         }

@@ -4,8 +4,8 @@
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A 
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
    PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
 package artofillusion.object;
 
@@ -16,7 +16,6 @@ import artofillusion.math.Vec3;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.nio.ByteBuffer;
 
@@ -326,9 +325,9 @@ class SplineMeshTest {
 
         var wireframe = mesh.getWireframeMesh();
         Assertions.assertNotNull(wireframe);
-        Assertions.assertNotNull(wireframe.vert);
-        Assertions.assertNotNull(wireframe.from);
-        Assertions.assertNotNull(wireframe.to);
+        Assertions.assertNotNull(wireframe.vert());
+        Assertions.assertNotNull(wireframe.from());
+        Assertions.assertNotNull(wireframe.to());
     }
 
     @Test

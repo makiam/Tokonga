@@ -242,7 +242,7 @@ public class AnimationPreviewer implements Runnable {
      * Record the bitmap for an image.
      */
     private byte[] recordImage(BufferedImage image) {
-        try(ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
+        try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
             ImageIO.write(image, "png", stream);
             return stream.toByteArray();
         } catch (IOException ex) {
