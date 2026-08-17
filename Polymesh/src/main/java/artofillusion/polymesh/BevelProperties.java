@@ -1,4 +1,4 @@
-/* 
+/*
    Copyright (C) 2024-2025 Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,12 +12,11 @@ package artofillusion.polymesh;
 import artofillusion.ui.Translate;
 import artofillusion.ui.ValueField;
 import java.awt.Component;
-
-import javax.swing.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import javax.swing.*;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -43,7 +42,7 @@ public class BevelProperties extends JDialog {
     public BevelProperties(PolyMeshEditorWindow owner) {
         super(owner.getComponent(), true);
         initComponents();
-        
+
         // Close the dialog when Esc is pressed
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         ActionListener action = e -> doClose(RET_CANCEL);
@@ -157,7 +156,7 @@ public class BevelProperties extends JDialog {
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
-    
+
     private void doClose(int retStatus) {
         returnStatus = retStatus;
         setVisible(false);

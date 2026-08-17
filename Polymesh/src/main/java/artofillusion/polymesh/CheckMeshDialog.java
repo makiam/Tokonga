@@ -1,4 +1,4 @@
-/* 
+/*
    Copyright (C) 2024 Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -11,7 +11,6 @@
 package artofillusion.polymesh;
 
 import artofillusion.ui.Translate;
-
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import javax.swing.JComponent;
@@ -71,7 +70,6 @@ public class CheckMeshDialog extends javax.swing.JDialog {
         setTitle(Translate.text("polymesh:checkRepair"));
         setPreferredSize(new java.awt.Dimension(400, 300));
         addWindowListener(new java.awt.event.WindowAdapter() {
-            @Override
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 closeDialog(evt);
             }
@@ -128,7 +126,7 @@ public class CheckMeshDialog extends javax.swing.JDialog {
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
-    
+
     private void doClose(int retStatus) {
         returnStatus = retStatus;
         setVisible(false);

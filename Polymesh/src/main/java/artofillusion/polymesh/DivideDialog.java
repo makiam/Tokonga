@@ -1,4 +1,4 @@
-/* 
+/*
    Copyright (C) 2024 Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -12,7 +12,6 @@
 package artofillusion.polymesh;
 
 import artofillusion.ui.Translate;
-
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.Optional;
@@ -47,7 +46,7 @@ public class DivideDialog extends javax.swing.JDialog {
         super(view.getComponent(), true);
         initComponents();
         this.onCommit = onCommit;
-        
+
         // Close the dialog when Esc is pressed
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         ActionListener action = e -> doClose(RET_CANCEL);
@@ -135,7 +134,7 @@ public class DivideDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        var model = (SpinnerNumberModel)valueSpinner.getModel();        
+        var model = (SpinnerNumberModel) valueSpinner.getModel();
         Optional.ofNullable(onCommit).ifPresent(action -> action.accept(model.getNumber().intValue()));
         doClose(RET_OK);
     }//GEN-LAST:event_okButtonActionPerformed
@@ -151,7 +150,7 @@ public class DivideDialog extends javax.swing.JDialog {
     private void closeDialog(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_closeDialog
         doClose(RET_CANCEL);
     }//GEN-LAST:event_closeDialog
-    
+
     private void doClose(int retStatus) {
         returnStatus = retStatus;
         setVisible(false);
