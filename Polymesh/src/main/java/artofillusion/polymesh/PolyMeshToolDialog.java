@@ -23,7 +23,6 @@ import java.util.stream.Stream;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
-
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -31,11 +30,11 @@ import lombok.extern.slf4j.Slf4j;
  * @author MaksK
  */
 @Slf4j
-class PolyMeshToolDialog extends javax.swing.JDialog {    
-    private static final Map<Integer, Integer> smoothTypesMap = Map.of(2,3,3,2);
+class PolyMeshToolDialog extends javax.swing.JDialog {
+    private static final Map<Integer, Integer> smoothTypesMap = Map.of(2, 3, 3, 2);
 
     private static final int templateStart = 5;
-    
+
     private final CreatePolyMeshTool tool;
     /**
      * A return status code - returned if Cancel button has been pressed
@@ -49,7 +48,7 @@ class PolyMeshToolDialog extends javax.swing.JDialog {
     /**
      * Creates new form PolyMeshToolDialog
      */
-    
+
     public PolyMeshToolDialog(CreatePolyMeshTool tool, java.awt.Frame parent) {
         super(parent, true);
         this.tool = tool;
@@ -64,7 +63,7 @@ class PolyMeshToolDialog extends javax.swing.JDialog {
 
         this.xSizeSpinner.getModel().setValue(tool.getUsize());
         this.ySizeSpinner.getModel().setValue(tool.getVsize());
-        
+
         // Close the dialog when Esc is pressed
         KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         ActionListener action = e -> doClose(RET_CANCEL);
@@ -224,18 +223,18 @@ class PolyMeshToolDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void okButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_okButtonActionPerformed
-        
+
         var type = this.getMeshTypeSelector().getSelectedIndex();
         var smooth = this.getSmoothTypesList().getSelectedIndex();
         tool.setShape(type);
         tool.setSmoothingMethod(smoothTypesMap.getOrDefault(smooth, smooth));
-        tool.setUsize((Integer)xSizeSpinner.getValue());
-        tool.setVsize((Integer)ySizeSpinner.getValue());
-        
+        tool.setUsize((Integer) xSizeSpinner.getValue());
+        tool.setVsize((Integer) ySizeSpinner.getValue());
+
         tool.setTemplateMesh(null);
-        if(type >= templateStart) {
+        if (type >= templateStart) {
             try {
-                File template = Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY, "PolyMeshTemplates", (String)this.getMeshTypeSelector().getSelectedItem()).toFile();
+                File template = Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY, "PolyMeshTemplates", (String) this.getMeshTypeSelector().getSelectedItem()).toFile();
                 DataInputStream dis = new DataInputStream(new FileInputStream(template));
                 tool.setTemplateMesh(new PolyMesh(dis));
             } catch (IOException ex) {
@@ -278,9 +277,9 @@ class PolyMeshToolDialog extends javax.swing.JDialog {
         if(type == 4) {
             xSizeSpinner.setValue(3);
             ySizeSpinner.setValue(3);
-        }        
+        }
     }//GEN-LAST:event_meshTypeSelectorActionPerformed
-    
+
     private void doClose(int retStatus) {
         returnStatus = retStatus;
         setVisible(false);
@@ -297,7 +296,7 @@ class PolyMeshToolDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     private int returnStatus = RET_CANCEL;
-    
+
     private void setPanelState(boolean state) {
         sizePanel.setEnabled(state);
         Stream.of(sizePanel.getComponents()).forEach(item -> item.setEnabled(state));
