@@ -63,7 +63,6 @@ import javax.swing.JSpinner.NumberEditor;
 import javax.swing.event.ChangeEvent;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -3843,7 +3842,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         mesh.invertNormals();
         objectChanged();
         updateMenus();
-        updateImage();
+        updateImage(); //ObjectEditorWindow method
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
     }
 
@@ -4263,11 +4262,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     }
 
-    @AllArgsConstructor
-    private class CopyEvent implements WidgetEvent {
-
-        @Getter
-        private final Widget widget;
+    private record CopyEvent(Widget widget) implements WidgetEvent {
+        @Override
+        public Widget getWidget() {
+            return widget;
+        }
     }
 
 }
