@@ -39,7 +39,6 @@ import artofillusion.ui.*;
 import buoy.event.CommandEvent;
 import buoy.event.EventSource;
 import buoy.event.KeyPressedEvent;
-import buoy.event.ValueChangedEvent;
 import buoy.event.WidgetEvent;
 import buoy.event.WidgetMouseEvent;
 import buoy.widget.*;
@@ -1525,15 +1524,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     /**
-     * Gets the action direction currently selected
-     *
-     * @return The actionDirection value
-     */
-    public int getActionDirection() {
-        return PolyMesh.NORMAL;
-    }
-
-    /**
      * Changes the interactive smooth level, if appropriate
      *
      * @param amount
@@ -1574,25 +1564,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
         objectChanged();
         updateImage();
-    }
-
-    /**
-     * Toggles live mirror on/off
-     */
-    public void toggleMirror() {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        if (realMirror) {
-            mesh.setMirrorState(mirror);
-            mesh.getMirroredMesh();
-            realMirror = false;
-        } else {
-            mirror = mesh.getMirrorState();
-            mesh.setMirrorState(PolyMesh.NO_MIRROR);
-            realMirror = true;
-        }
-        objectChanged();
-        updateImage();
-
     }
 
     /*
@@ -2626,10 +2597,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         origin.scale(1.0 / count);
 
         norm.normalize();
-        for (int i = 0; i < vert.length; ++i) {
-            if (selected[i]) {
-            }
-        }
+        //
+//        for (int i = 0; i < vert.length; ++i) {
+//            if (selected[i]) {
+//            }
+//        }
         count = 0;
         for (int i = 0; i < vert.length; ++i) {
             if (selected[i]) {
@@ -2729,70 +2701,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         spinner.getComponent().setEditor(ed);
     }
 
-    /**
-     * Sets the smoothness of selected vertices or edges
-     */
-    void setSmoothnessCommand() {
-        final PolyMesh theMesh = (PolyMesh) objInfo.getGeometry();
-        PolyMesh prevMesh = theMesh.duplicate();
-
-        final Wedge[] ed = theMesh.getEdges();
-        final boolean pointmode = (selectMode == POINT_MODE);
-        final ActionProcessor processor = new ActionProcessor();
-        final ValueSlider smoothness;
-        int i;
-
-        for (i = 0; i < selected.length && !selected[i]; i++);
-        if (i == selected.length) {
-            return;
-        }
-        /*
-         * if ( pointmode ) valueWidget.getValue() = vt[i].smoothness; else
-         */
-        smoothness = new ValueSlider(0.0, 1.0, 1000, valueWidget.getValue());
-        smoothness.addEventLink(ValueChangedEvent.class, new Object() {
-            void processEvent() {
-                processor.addEvent(new Runnable() {
-                    @Override
-                    public void run() {
-                        float s = (float) smoothness.getValue();
-                        if (s < 0) {
-                            s = 0;
-                        }
-                        if (s > 1) {
-                            s = 1;
-                        }
-                        for (int i = 0; i < selected.length; i++) {
-                            if (selected[i]) {
-                                /*
-                                 * if ( pointmode ) vt[i].smoothness = s; else {
-                                 */
-                                ed[i].smoothness = s;
-                                ed[ed[i].hedge].smoothness = s;
-                                // }
-                            }
-                        }
-                        theMesh.setSmoothingMethod(theMesh.getSmoothingMethod());
-                        objectChanged();
-                        updateImage();
-
-                    }
-                });
-            }
-        });
-        ComponentsDialog dlg = new ComponentsDialog(this, Translate.text(pointmode ? "setPointSmoothness" : "setEdgeSmoothness"),
-                new Widget[]{smoothness}, new String[]{Translate.text("Smoothness")});
-        processor.stopProcessing();
-        if (dlg.clickedOk()) {
-            setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, prevMesh));
-        } else {
-            theMesh.copyObject(prevMesh);
-            objectChanged();
-            updateImage();
-
-        }
-    }
-
     private void onEdgeSliderValueChange(ChangeEvent event) {
         log.debug("Slider Value changed for {}", event.getSource());
         PolyMesh theMesh = (PolyMesh) objInfo.object;
@@ -2889,15 +2797,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
         }
         selectionDistance = dist;
-    }
-
-    /**
-     * Determine whether we are in tolerant selection mode.
-     *
-     * @return The tolerant valueWidget.getValue()
-     */
-    public boolean isTolerant() {
-        return tolerant;
     }
 
     /**
