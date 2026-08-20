@@ -1858,95 +1858,93 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Move vertices menu command (normal)
      */
     private void doMoveVerticesNormal(ActionEvent event) {
-        move(selectMode, PolyMesh.NORMAL);
+        move(PolyMesh.NORMAL);
     }
 
     /**
      * Move vertices menu command (x)
      */
     private void doMoveVerticesX(ActionEvent event) {
-        move(selectMode, PolyMesh.X);
+        move(PolyMesh.X);
     }
 
     /**
      * Move vertices menu command (y)
      */
     private void doMoveVerticesY(ActionEvent event) {
-        move(selectMode, PolyMesh.Y);
+        move(PolyMesh.Y);
     }
 
     /**
      * Move vertices menu command (z)
      */
     private void doMoveVerticesZ(ActionEvent event) {
-        move(selectMode, PolyMesh.Z);
+        move(PolyMesh.Z);
     }
 
     /**
      * Move edges menu command (normal)
      */
     private void doMoveEdgesNormal(ActionEvent event) {
-        move(selectMode, PolyMesh.NORMAL);
+        move(PolyMesh.NORMAL);
     }
 
     /**
      * Move edges menu command (x)
      */
     private void doMoveEdgesX(ActionEvent event) {
-        move(selectMode, PolyMesh.X);
+        move(PolyMesh.X);
     }
 
     /**
      * Move edges menu command (y)
      */
     private void doMoveEdgesY(ActionEvent event) {
-        move(selectMode, PolyMesh.Y);
+        move(PolyMesh.Y);
     }
 
     /**
      * Move edges menu command (z)
      */
     private void doMoveEdgesZ(ActionEvent event) {
-        move(selectMode, PolyMesh.Z);
+        move(PolyMesh.Z);
     }
 
     /**
      * Move faces menu command (normal)
      */
     private void doMoveFacesNormal(ActionEvent event) {
-        move(selectMode, PolyMesh.NORMAL);
+        move(PolyMesh.NORMAL);
     }
 
     /**
      * Move faces menu command (x)
      */
     private void doMoveFacesX(ActionEvent event) {
-        move(selectMode, PolyMesh.X);
+        move(PolyMesh.X);
     }
 
     /**
      * Move faces menu command (y)
      */
     private void doMoveFacesY(ActionEvent event) {
-        move(selectMode, PolyMesh.Y);
+        move(PolyMesh.Y);
     }
 
     /**
      * Move faces menu command (z)
      */
     private void doMoveFacesZ(ActionEvent event) {
-        move(selectMode, PolyMesh.Z);
+        move(PolyMesh.Z);
     }
 
     /**
      * Generic move command
      *
-     * @param kind
-     * Description of the Parameter
      * @param direction
      * Description of the Parameter
      */
-    private void move(int kind, short direction) {
+    private void move(short direction) {
         if (valueWidget.isActivated()) {
             return;
         }
