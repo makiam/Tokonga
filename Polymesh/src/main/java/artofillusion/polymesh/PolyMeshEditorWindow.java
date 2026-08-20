@@ -55,6 +55,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.*;
 import javax.swing.*;
@@ -3830,23 +3831,21 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private void doSaveAsTemplate(ActionEvent event) {
 
-        File templateDir = new File(ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates");
-        if (templateDir.exists() || templateDir.mkdir()) {
-            var chooser = new JFileChooser();
-            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            chooser.setDialogTitle(Translate.text("polymesh:saveTemplate"));
-            chooser.setCurrentDirectory(templateDir);
-            if (chooser.showSaveDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
-                File file = chooser.getSelectedFile();
-                try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
-                    (objInfo.object).writeToFile(dos, null);
-                } catch (IOException ex) {
-                    log.atError().setCause(ex).log("Error writing template: {}", ex.getMessage());
-                }
+        var templateDir = Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY, "PolyMeshTemplates");
+
+        var chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setDialogTitle(Translate.text("polymesh:saveTemplate"));
+        chooser.setCurrentDirectory(templateDir.toFile());
+        if (chooser.showSaveDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
+                (objInfo.object).writeToFile(dos, null);
+            } catch (IOException ex) {
+                log.atError().setCause(ex).log("Error writing template: {}", ex.getMessage());
             }
-        } else {
-            MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("polymesh:errorTemplateDir"));
         }
+
     }
 
     /**

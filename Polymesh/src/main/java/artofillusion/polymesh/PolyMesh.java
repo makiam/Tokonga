@@ -190,8 +190,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private int mappingVertices;
     private int mappingEdges;
-    private int mappingFaces; //markers to check if UVMapping data
-    //is still valid
+    private int mappingFaces; //markers to check if UVMapping data is still valid
 
     //colors and preferences
     private boolean useCustomColors;
