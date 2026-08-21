@@ -1381,16 +1381,16 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             editMenuItem[4].setEnabled(true);
             editMenuItem[5].setEnabled(true);
             if (selCount < 4) {
-                ((Widget) vertexMenuItem[6]).setEnabled(false);
-                ((Widget) vertexMenuItem[7]).setEnabled(false);
-                ((Widget) vertexMenuItem[8]).setEnabled(false);
-                ((Widget) vertexPopupMenuItem[6]).setEnabled(false);
-                ((Widget) vertexPopupMenuItem[7]).setEnabled(false);
-                ((Widget) vertexPopupMenuItem[8]).setEnabled(false);
+                ((Widget<?>) vertexMenuItem[6]).setEnabled(false);
+                ((Widget<?>) vertexMenuItem[7]).setEnabled(false);
+                ((Widget<?>) vertexMenuItem[8]).setEnabled(false);
+                ((Widget<?>) vertexPopupMenuItem[6]).setEnabled(false);
+                ((Widget<?>) vertexPopupMenuItem[7]).setEnabled(false);
+                ((Widget<?>) vertexPopupMenuItem[8]).setEnabled(false);
             }
             if (selCount != 2) {
-                ((Widget) vertexMenuItem[10]).setEnabled(false);
-                ((Widget) vertexPopupMenuItem[10]).setEnabled(false);
+                ((Widget<?>) vertexMenuItem[10]).setEnabled(false);
+                ((Widget<?>) vertexPopupMenuItem[10]).setEnabled(false);
             }
             switch (selectMode) {
                 default:
@@ -1451,14 +1451,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 case POINT_MODE:
                     cornerCB.setState(false);
                     cornerCB.setEnabled(false);
-                    ((Widget) vertexMenuItem[15]).setEnabled(true);
-                    ((Widget) vertexPopupMenuItem[15]).setEnabled(true);
+                    ((Widget<?>) vertexMenuItem[15]).setEnabled(true);
+                    ((Widget<?>) vertexPopupMenuItem[15]).setEnabled(true);
                     break;
                 case EDGE_MODE:
-                    ((Widget) edgeMenuItem[20]).setEnabled(true);
-                    ((Widget) edgeMenuItem[21]).setEnabled(true);
-                    ((Widget) edgePopupMenuItem[20]).setEnabled(true);
-                    ((Widget) edgePopupMenuItem[21]).setEnabled(true);
+                    ((Widget<?>) edgeMenuItem[20]).setEnabled(true);
+                    ((Widget<?>) edgeMenuItem[21]).setEnabled(true);
+                    ((Widget<?>) edgePopupMenuItem[20]).setEnabled(true);
+                    ((Widget<?>) edgePopupMenuItem[21]).setEnabled(true);
                     edgeSlider.setEnabled(false);
                     break;
                 case FACE_MODE:
@@ -3042,9 +3042,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         hideFace = hidden;
         hideVert = new boolean[mesh.getVertices().length];
         if (hideFace == null) {
-            for (int i = 0; i < hideVert.length; i++) {
-                hideVert[i] = false;
-            }
+            Arrays.fill(hideVert, false);
         } else {
             Arrays.fill(hideVert, true);
             Wface[] face = mesh.getFaces();

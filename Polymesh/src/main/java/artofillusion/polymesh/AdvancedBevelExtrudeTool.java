@@ -98,8 +98,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
             short EXTRUDE_FACE_GROUPS = 2;
             mode = (separateFaces ? EXTRUDE_FACE_GROUPS : EXTRUDE_FACES);
         } else {
-            short NO_EXTRUDE = 0;
-            mode = NO_EXTRUDE;
+            mode = (short) 0;
         }
     }
 
@@ -118,7 +117,7 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
 
     private void doManipulatorShapedMesh(Manipulator.ManipulatorEvent e) {
         PolyMesh mesh = (PolyMesh) controller.getObject().getGeometry();
-        UndoRecord undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, new Object[]{mesh, origMesh});
+        UndoRecord undo = new UndoRecord(theWindow, false, UndoRecord.COPY_OBJECT, mesh, origMesh);
         theWindow.setUndoRecord(undo);
 
         origMesh = null;
@@ -156,31 +155,25 @@ public class AdvancedBevelExtrudeTool extends AdvancedEditingTool {
             mesh.copyObject(origMesh);
             boolean[] sel = mesh.bevelVertices(selected, drag.y);
             theWindow.setHelpText(Translate.text("polymesh:advancedBevelExtrudeTool.pointEdgeDragText", drag.y));
-            for (int i = 0; i < selected.length; ++i) {
-                sel[i] = selected[i];
-            }
+            System.arraycopy(selected, 0, sel, 0, selected.length);
             controller.objectChanged();
             controller.setSelection(sel);
         } else if (selectMode == MeshEditController.EDGE_MODE) {
             mesh.copyObject(origMesh);
             boolean[] sel = mesh.bevelEdges(selected, drag.y);
             theWindow.setHelpText(Translate.text("polymesh:advancedBevelExtrudeTool.pointEdgeDragText", drag.y));
-            for (int i = 0; i < selected.length; ++i) {
-                sel[i] = selected[i];
-            }
+            System.arraycopy(selected, 0, sel, 0, selected.length);
             controller.objectChanged();
             controller.setSelection(sel);
         } else {
             mesh.copyObject(origMesh);
             if (mode == EXTRUDE_FACES) {
-                mesh.extrudeRegion(selected, drag.y, (Vec3) null, Math.abs(1.0 - drag.x), camZ, ctrlMod, shiftMod);
+                mesh.extrudeRegion(selected, drag.y, null, Math.abs(1.0 - drag.x), camZ, ctrlMod, shiftMod);
             } else {
-                mesh.extrudeFaces(selected, drag.y, (Vec3) null, Math.abs(1.0 - drag.x), camZ, ctrlMod, shiftMod);
+                mesh.extrudeFaces(selected, drag.y, null, Math.abs(1.0 - drag.x), camZ, ctrlMod, shiftMod);
             }
             boolean[] sel = new boolean[mesh.getFaces().length];
-            for (int i = 0; i < selected.length; ++i) {
-                sel[i] = selected[i];
-            }
+            System.arraycopy(selected, 0, sel, 0, selected.length);
             theWindow.setHelpText(Translate.text("polymesh:advancedBevelExtrudeTool.faceDragText", 1.0 - drag.x, drag.y));
             controller.objectChanged();
             controller.setSelection(sel);

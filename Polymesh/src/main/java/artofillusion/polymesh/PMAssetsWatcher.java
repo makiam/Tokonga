@@ -12,7 +12,7 @@ package artofillusion.polymesh;
 import artofillusion.ArtOfIllusion;
 import artofillusion.Plugin;
 
-import java.nio.file.Files;
+
 import java.nio.file.Paths;
 
 public class PMAssetsWatcher implements Plugin {
