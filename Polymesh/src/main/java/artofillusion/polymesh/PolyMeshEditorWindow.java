@@ -1163,30 +1163,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     /**
-     * Add an extra texture parameter to a triangle mesh.
-     */
-    private void addTriangleMeshExtraParameter(TriangleMesh mesh) {
-        TextureParameter hideFaceParam = new TextureParameter(this, "Hide Face", 0.0, 1.0, 0.0);
-        TextureParameter[] params = mesh.getParameters();
-        TextureParameter[] newparams = new TextureParameter[params.length + 1];
-        ParameterValue[] values = mesh.getParameterValues();
-        ParameterValue[] newvalues = new ParameterValue[values.length + 1];
-        for (int i = 0; i < params.length; i++) {
-            newparams[i] = params[i];
-            newvalues[i] = values[i];
-        }
-        newparams[params.length] = hideFaceParam;
-        newvalues[values.length] = new FaceParameterValue(mesh, hideFaceParam);
-        double[] index = new double[mesh.getFaces().length];
-        for (int i = 0; i < index.length; i++) {
-            index[i] = i;
-        }
-        ((FaceParameterValue) newvalues[values.length]).setValue(index);
-        mesh.setParameters(newparams);
-        mesh.setParameterValues(newvalues);
-    }
-
-    /**
      * Get the subdivided mesh which represents the surface. If the
      * mesh is not subdivided, this returns null.
      */
@@ -3668,8 +3644,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         for (int i = 0; i < selPoints.length; i++) {
             if (selPoints[i]) {
-                vertices[i].r = selCenter.plus(orVerts[i].r.minus(selCenter)
-                        .times(valueWidget.getValue()));
+                vertices[i].r = selCenter.plus(orVerts[i].r.minus(selCenter).times(valueWidget.getValue()));
             }
         }
         objectChanged();
@@ -3688,8 +3663,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         MeshVertex[] orVerts = priorValueMesh.getVertices();
         for (int i = 0; i < selPoints.length; i++) {
             if (selPoints[i]) {
-                vertices[i].r = orVerts[i].r.plus(normals[i].times(valueWidget
-                        .getValue()));
+                vertices[i].r = orVerts[i].r.plus(normals[i].times(valueWidget.getValue()));
             }
         }
         objectChanged();
