@@ -750,20 +750,14 @@ public class PolyMeshViewer extends MeshViewer {
         if (e.isShiftDown()) {
             sentClick = false;
         } else {
-            Vec3 pos = null;
-            switch (controller.getSelectionMode()) {
-                case MeshEditController.POINT_MODE:
-                    pos = v[i].r;
-                    break;
-                case MeshEditController.EDGE_MODE:
-                    pos = mesh.getEdgePosition(i);
-                    break;
-                case MeshEditController.FACE_MODE:
-                    pos = mesh.getFacePosition(i);
-                    break;
-            }
-            for (i = 0; i < manipulatorArray.length; i++) {
-                if (manipulatorArray[i].mousePressedOnHandle(e, j, pos)) {
+            Vec3 pos = switch (controller.getSelectionMode()) {
+                case MeshEditController.POINT_MODE -> v[i].r;
+                case MeshEditController.EDGE_MODE -> mesh.getEdgePosition(i);
+                case MeshEditController.FACE_MODE -> mesh.getFacePosition(i);
+                default -> null;
+            };
+            for (var mai: manipulatorArray) {
+                if (mai.mousePressedOnHandle(e, j, pos)) {
                     return;
                 }
             }
@@ -774,8 +768,8 @@ public class PolyMeshViewer extends MeshViewer {
     }
 
     protected void mouseClicked(WidgetMouseEvent ev) {
-        for (Manipulator manipulator : manipulatorArray) {
-            if (manipulator.mouseClicked(ev)) {
+        for (var mai : manipulatorArray) {
+            if (mai.mouseClicked(ev)) {
                 return;
             }
         }
@@ -792,8 +786,8 @@ public class PolyMeshViewer extends MeshViewer {
         if (!dragging && clickPoint == null) {
             return;
         }
-        for (Manipulator manipulator : manipulatorArray) {
-            if (manipulator.mouseDragged(e)) {
+        for (var mai : manipulatorArray) {
+            if (mai.mouseDragged(e)) {
                 return;
             }
         }
@@ -849,7 +843,7 @@ public class PolyMeshViewer extends MeshViewer {
         // If the user was dragging a selection box, then select or deselect
         // anything it intersects.
         if (selectBounds != null) {
-            boolean newsel = !e.isControlDown();
+            boolean newSel = !e.isControlDown();
             int ref;
             if (controller.getSelectionMode() == MeshEditController.POINT_MODE) {
                 for (i = 0; i < selected.length; i++) {
@@ -858,9 +852,8 @@ public class PolyMeshViewer extends MeshViewer {
                     } else {
                         ref = i;
                     }
-                    if (ref != -1 && !hideVert[i]
-                            && selectionRegionContains(screenVert[ref]) && isVertexVisible(ref)) {
-                        selected[i] = newsel;
+                    if (ref != -1 && !hideVert[i] && selectionRegionContains(screenVert[ref]) && isVertexVisible(ref)) {
+                        selected[i] = newSel;
                     }
                 }
             } else if (controller.getSelectionMode() == MeshEditController.EDGE_MODE) {
@@ -876,7 +869,7 @@ public class PolyMeshViewer extends MeshViewer {
                                         screenVert[ed[ref].vertex],
                                         screenVert[ed[ed[ref].hedge].vertex])
                                 && isEdgeVisible(ref)) {
-                            selected[i] = newsel;
+                            selected[i] = newSel;
                         }
                     }
                 } else {
@@ -890,7 +883,7 @@ public class PolyMeshViewer extends MeshViewer {
                                 && selectionRegionContains(screenVert[ed[ref].vertex])
                                 && selectionRegionContains(screenVert[ed[ed[ref].hedge].vertex])
                                 && isEdgeVisible(ref)) {
-                            selected[i] = newsel;
+                            selected[i] = newSel;
                         }
                     }
                 }
@@ -912,7 +905,7 @@ public class PolyMeshViewer extends MeshViewer {
                                 contains |= selectionRegionContains(screenVert[vf[j]]);
                             }
                             if (contains && isFaceVisible(ref)) {
-                                selected[ref] = newsel;
+                                selected[ref] = newSel;
                             }
                         }
                     }
@@ -933,7 +926,7 @@ public class PolyMeshViewer extends MeshViewer {
                                 contains &= selectionRegionContains(screenVert[vf[j]]);
                             }
                             if (contains && isFaceVisible(ref)) {
-                                selected[ref] = newsel;
+                                selected[ref] = newSel;
                             }
                         }
                     }
@@ -1049,7 +1042,7 @@ public class PolyMeshViewer extends MeshViewer {
         double v;
         double w;
         double z;
-        double closestz = Double.MAX_VALUE;
+        double closestZ = Double.MAX_VALUE;
         boolean sel = false;
         Point v1;
         Point v2;
@@ -1085,11 +1078,11 @@ public class PolyMeshViewer extends MeshViewer {
                 if (distance < maxDistance) {
                     maxDistance = distance;
                     which = ref;
-                    closestz = z;
+                    closestZ = z;
                     sel = selected[ref];
-                } else if (distance == maxDistance && z < closestz) {
+                } else if (distance == maxDistance && z < closestZ) {
                     which = ref;
-                    closestz = z;
+                    closestZ = z;
                     sel = selected[ref];
                 }
             }
@@ -1194,7 +1187,7 @@ public class PolyMeshViewer extends MeshViewer {
                 z = u * theCamera.getObjectToView().timesZ(pv[vv1].r) + v * theCamera.getObjectToView().timesZ(pv[vv2].r);
                 if (distance < maxDistance) {
                     maxDistance = distance;
-                    closestz = z;
+                    closestZ = z;
                     if (projectedEdge == null && ref >= trueEdges.length / 2) {
                         ref = trueEdges[ref].hedge;
                     }
@@ -1203,8 +1196,8 @@ public class PolyMeshViewer extends MeshViewer {
                     if (uvw != null) {
                         uvw.set(u, v, w);
                     }
-                } else if (distance < handleSize / 2 && z < closestz) {
-                    closestz = z;
+                } else if (distance < handleSize / 2 && z < closestZ) {
+                    closestZ = z;
                     if (projectedEdge == null && ref >= trueEdges.length / 2) {
                         ref = trueEdges[ref].hedge;
                     }
@@ -1264,9 +1257,9 @@ public class PolyMeshViewer extends MeshViewer {
                 }
                 bary.scale(1.0 / (vf.length * 1.0));
                 z = theCamera.getObjectToView().timesZ(bary);
-                if (z < closestz) {
+                if (z < closestZ) {
                     which = ref;
-                    closestz = z;
+                    closestZ = z;
                 }
 
             }

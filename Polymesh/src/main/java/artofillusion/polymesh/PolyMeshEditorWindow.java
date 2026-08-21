@@ -39,7 +39,6 @@ import artofillusion.ui.*;
 import buoy.event.CommandEvent;
 import buoy.event.EventSource;
 import buoy.event.KeyPressedEvent;
-import buoy.event.ValueChangedEvent;
 import buoy.event.WidgetEvent;
 import buoy.event.WidgetMouseEvent;
 import buoy.widget.*;
@@ -56,6 +55,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.*;
 import javax.swing.*;
@@ -63,7 +63,6 @@ import javax.swing.JSpinner.NumberEditor;
 import javax.swing.event.ChangeEvent;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -1164,30 +1163,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     /**
-     * Add an extra texture parameter to a triangle mesh.
-     */
-    private void addTriangleMeshExtraParameter(TriangleMesh mesh) {
-        TextureParameter hideFaceParam = new TextureParameter(this, "Hide Face", 0.0, 1.0, 0.0);
-        TextureParameter[] params = mesh.getParameters();
-        TextureParameter[] newparams = new TextureParameter[params.length + 1];
-        ParameterValue[] values = mesh.getParameterValues();
-        ParameterValue[] newvalues = new ParameterValue[values.length + 1];
-        for (int i = 0; i < params.length; i++) {
-            newparams[i] = params[i];
-            newvalues[i] = values[i];
-        }
-        newparams[params.length] = hideFaceParam;
-        newvalues[values.length] = new FaceParameterValue(mesh, hideFaceParam);
-        double[] index = new double[mesh.getFaces().length];
-        for (int i = 0; i < index.length; i++) {
-            index[i] = i;
-        }
-        ((FaceParameterValue) newvalues[values.length]).setValue(index);
-        mesh.setParameters(newparams);
-        mesh.setParameterValues(newvalues);
-    }
-
-    /**
      * Get the subdivided mesh which represents the surface. If the
      * mesh is not subdivided, this returns null.
      */
@@ -1382,16 +1357,16 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             editMenuItem[4].setEnabled(true);
             editMenuItem[5].setEnabled(true);
             if (selCount < 4) {
-                ((Widget) vertexMenuItem[6]).setEnabled(false);
-                ((Widget) vertexMenuItem[7]).setEnabled(false);
-                ((Widget) vertexMenuItem[8]).setEnabled(false);
-                ((Widget) vertexPopupMenuItem[6]).setEnabled(false);
-                ((Widget) vertexPopupMenuItem[7]).setEnabled(false);
-                ((Widget) vertexPopupMenuItem[8]).setEnabled(false);
+                ((Widget<?>) vertexMenuItem[6]).setEnabled(false);
+                ((Widget<?>) vertexMenuItem[7]).setEnabled(false);
+                ((Widget<?>) vertexMenuItem[8]).setEnabled(false);
+                ((Widget<?>) vertexPopupMenuItem[6]).setEnabled(false);
+                ((Widget<?>) vertexPopupMenuItem[7]).setEnabled(false);
+                ((Widget<?>) vertexPopupMenuItem[8]).setEnabled(false);
             }
             if (selCount != 2) {
-                ((Widget) vertexMenuItem[10]).setEnabled(false);
-                ((Widget) vertexPopupMenuItem[10]).setEnabled(false);
+                ((Widget<?>) vertexMenuItem[10]).setEnabled(false);
+                ((Widget<?>) vertexPopupMenuItem[10]).setEnabled(false);
             }
             switch (selectMode) {
                 default:
@@ -1452,14 +1427,14 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
                 case POINT_MODE:
                     cornerCB.setState(false);
                     cornerCB.setEnabled(false);
-                    ((Widget) vertexMenuItem[15]).setEnabled(true);
-                    ((Widget) vertexPopupMenuItem[15]).setEnabled(true);
+                    ((Widget<?>) vertexMenuItem[15]).setEnabled(true);
+                    ((Widget<?>) vertexPopupMenuItem[15]).setEnabled(true);
                     break;
                 case EDGE_MODE:
-                    ((Widget) edgeMenuItem[20]).setEnabled(true);
-                    ((Widget) edgeMenuItem[21]).setEnabled(true);
-                    ((Widget) edgePopupMenuItem[20]).setEnabled(true);
-                    ((Widget) edgePopupMenuItem[21]).setEnabled(true);
+                    ((Widget<?>) edgeMenuItem[20]).setEnabled(true);
+                    ((Widget<?>) edgeMenuItem[21]).setEnabled(true);
+                    ((Widget<?>) edgePopupMenuItem[20]).setEnabled(true);
+                    ((Widget<?>) edgePopupMenuItem[21]).setEnabled(true);
                     edgeSlider.setEnabled(false);
                     break;
                 case FACE_MODE:
@@ -1526,15 +1501,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
     }
 
     /**
-     * Gets the action direction currently selected
-     *
-     * @return The actionDirection value
-     */
-    public int getActionDirection() {
-        return PolyMesh.NORMAL;
-    }
-
-    /**
      * Changes the interactive smooth level, if appropriate
      *
      * @param amount
@@ -1575,25 +1541,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         }
         objectChanged();
         updateImage();
-    }
-
-    /**
-     * Toggles live mirror on/off
-     */
-    public void toggleMirror() {
-        PolyMesh mesh = (PolyMesh) objInfo.object;
-        if (realMirror) {
-            mesh.setMirrorState(mirror);
-            mesh.getMirroredMesh();
-            realMirror = false;
-        } else {
-            mirror = mesh.getMirrorState();
-            mesh.setMirrorState(PolyMesh.NO_MIRROR);
-            realMirror = true;
-        }
-        objectChanged();
-        updateImage();
-
     }
 
     /*
@@ -1888,95 +1835,93 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
      * Move vertices menu command (normal)
      */
     private void doMoveVerticesNormal(ActionEvent event) {
-        move(selectMode, PolyMesh.NORMAL);
+        move(PolyMesh.NORMAL);
     }
 
     /**
      * Move vertices menu command (x)
      */
     private void doMoveVerticesX(ActionEvent event) {
-        move(selectMode, PolyMesh.X);
+        move(PolyMesh.X);
     }
 
     /**
      * Move vertices menu command (y)
      */
     private void doMoveVerticesY(ActionEvent event) {
-        move(selectMode, PolyMesh.Y);
+        move(PolyMesh.Y);
     }
 
     /**
      * Move vertices menu command (z)
      */
     private void doMoveVerticesZ(ActionEvent event) {
-        move(selectMode, PolyMesh.Z);
+        move(PolyMesh.Z);
     }
 
     /**
      * Move edges menu command (normal)
      */
     private void doMoveEdgesNormal(ActionEvent event) {
-        move(selectMode, PolyMesh.NORMAL);
+        move(PolyMesh.NORMAL);
     }
 
     /**
      * Move edges menu command (x)
      */
     private void doMoveEdgesX(ActionEvent event) {
-        move(selectMode, PolyMesh.X);
+        move(PolyMesh.X);
     }
 
     /**
      * Move edges menu command (y)
      */
     private void doMoveEdgesY(ActionEvent event) {
-        move(selectMode, PolyMesh.Y);
+        move(PolyMesh.Y);
     }
 
     /**
      * Move edges menu command (z)
      */
     private void doMoveEdgesZ(ActionEvent event) {
-        move(selectMode, PolyMesh.Z);
+        move(PolyMesh.Z);
     }
 
     /**
      * Move faces menu command (normal)
      */
     private void doMoveFacesNormal(ActionEvent event) {
-        move(selectMode, PolyMesh.NORMAL);
+        move(PolyMesh.NORMAL);
     }
 
     /**
      * Move faces menu command (x)
      */
     private void doMoveFacesX(ActionEvent event) {
-        move(selectMode, PolyMesh.X);
+        move(PolyMesh.X);
     }
 
     /**
      * Move faces menu command (y)
      */
     private void doMoveFacesY(ActionEvent event) {
-        move(selectMode, PolyMesh.Y);
+        move(PolyMesh.Y);
     }
 
     /**
      * Move faces menu command (z)
      */
     private void doMoveFacesZ(ActionEvent event) {
-        move(selectMode, PolyMesh.Z);
+        move(PolyMesh.Z);
     }
 
     /**
      * Generic move command
      *
-     * @param kind
-     * Description of the Parameter
      * @param direction
      * Description of the Parameter
      */
-    private void move(int kind, short direction) {
+    private void move(short direction) {
         if (valueWidget.isActivated()) {
             return;
         }
@@ -2627,10 +2572,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         origin.scale(1.0 / count);
 
         norm.normalize();
-        for (int i = 0; i < vert.length; ++i) {
-            if (selected[i]) {
-            }
-        }
+        //
+//        for (int i = 0; i < vert.length; ++i) {
+//            if (selected[i]) {
+//            }
+//        }
         count = 0;
         for (int i = 0; i < vert.length; ++i) {
             if (selected[i]) {
@@ -2730,70 +2676,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         spinner.getComponent().setEditor(ed);
     }
 
-    /**
-     * Sets the smoothness of selected vertices or edges
-     */
-    void setSmoothnessCommand() {
-        final PolyMesh theMesh = (PolyMesh) objInfo.getGeometry();
-        PolyMesh prevMesh = theMesh.duplicate();
-
-        final Wedge[] ed = theMesh.getEdges();
-        final boolean pointmode = (selectMode == POINT_MODE);
-        final ActionProcessor processor = new ActionProcessor();
-        final ValueSlider smoothness;
-        int i;
-
-        for (i = 0; i < selected.length && !selected[i]; i++);
-        if (i == selected.length) {
-            return;
-        }
-        /*
-         * if ( pointmode ) valueWidget.getValue() = vt[i].smoothness; else
-         */
-        smoothness = new ValueSlider(0.0, 1.0, 1000, valueWidget.getValue());
-        smoothness.addEventLink(ValueChangedEvent.class, new Object() {
-            void processEvent() {
-                processor.addEvent(new Runnable() {
-                    @Override
-                    public void run() {
-                        float s = (float) smoothness.getValue();
-                        if (s < 0) {
-                            s = 0;
-                        }
-                        if (s > 1) {
-                            s = 1;
-                        }
-                        for (int i = 0; i < selected.length; i++) {
-                            if (selected[i]) {
-                                /*
-                                 * if ( pointmode ) vt[i].smoothness = s; else {
-                                 */
-                                ed[i].smoothness = s;
-                                ed[ed[i].hedge].smoothness = s;
-                                // }
-                            }
-                        }
-                        theMesh.setSmoothingMethod(theMesh.getSmoothingMethod());
-                        objectChanged();
-                        updateImage();
-
-                    }
-                });
-            }
-        });
-        ComponentsDialog dlg = new ComponentsDialog(this, Translate.text(pointmode ? "setPointSmoothness" : "setEdgeSmoothness"),
-                new Widget[]{smoothness}, new String[]{Translate.text("Smoothness")});
-        processor.stopProcessing();
-        if (dlg.clickedOk()) {
-            setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, theMesh, prevMesh));
-        } else {
-            theMesh.copyObject(prevMesh);
-            objectChanged();
-            updateImage();
-
-        }
-    }
-
     private void onEdgeSliderValueChange(ChangeEvent event) {
         log.debug("Slider Value changed for {}", event.getSource());
         PolyMesh theMesh = (PolyMesh) objInfo.object;
@@ -2890,15 +2772,6 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
             }
         }
         selectionDistance = dist;
-    }
-
-    /**
-     * Determine whether we are in tolerant selection mode.
-     *
-     * @return The tolerant valueWidget.getValue()
-     */
-    public boolean isTolerant() {
-        return tolerant;
     }
 
     /**
@@ -3145,9 +3018,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         hideFace = hidden;
         hideVert = new boolean[mesh.getVertices().length];
         if (hideFace == null) {
-            for (int i = 0; i < hideVert.length; i++) {
-                hideVert[i] = false;
-            }
+            Arrays.fill(hideVert, false);
         } else {
             Arrays.fill(hideVert, true);
             Wface[] face = mesh.getFaces();
@@ -3773,8 +3644,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
         for (int i = 0; i < selPoints.length; i++) {
             if (selPoints[i]) {
-                vertices[i].r = selCenter.plus(orVerts[i].r.minus(selCenter)
-                        .times(valueWidget.getValue()));
+                vertices[i].r = selCenter.plus(orVerts[i].r.minus(selCenter).times(valueWidget.getValue()));
             }
         }
         objectChanged();
@@ -3793,8 +3663,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         MeshVertex[] orVerts = priorValueMesh.getVertices();
         for (int i = 0; i < selPoints.length; i++) {
             if (selPoints[i]) {
-                vertices[i].r = orVerts[i].r.plus(normals[i].times(valueWidget
-                        .getValue()));
+                vertices[i].r = orVerts[i].r.plus(normals[i].times(valueWidget.getValue()));
             }
         }
         objectChanged();
@@ -3843,7 +3712,7 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
         mesh.invertNormals();
         objectChanged();
         updateMenus();
-        updateImage();
+        updateImage(); //ObjectEditorWindow method
         setUndoRecord(new UndoRecord(this, false, UndoRecord.COPY_OBJECT, mesh, prevMesh));
     }
 
@@ -3934,23 +3803,21 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     private void doSaveAsTemplate(ActionEvent event) {
 
-        File templateDir = new File(ArtOfIllusion.PLUGIN_DIRECTORY + File.separator + "PolyMeshTemplates");
-        if (templateDir.exists() || templateDir.mkdir()) {
-            var chooser = new JFileChooser();
-            chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            chooser.setDialogTitle(Translate.text("polymesh:saveTemplate"));
-            chooser.setCurrentDirectory(templateDir);
-            if (chooser.showSaveDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
-                File file = chooser.getSelectedFile();
-                try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
-                    (objInfo.object).writeToFile(dos, null);
-                } catch (IOException ex) {
-                    log.atError().setCause(ex).log("Error writing template: {}", ex.getMessage());
-                }
+        var templateDir = Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY, "PolyMeshTemplates");
+
+        var chooser = new JFileChooser();
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setDialogTitle(Translate.text("polymesh:saveTemplate"));
+        chooser.setCurrentDirectory(templateDir.toFile());
+        if (chooser.showSaveDialog(this.getComponent()) == JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(file))) {
+                (objInfo.object).writeToFile(dos, null);
+            } catch (IOException ex) {
+                log.atError().setCause(ex).log("Error writing template: {}", ex.getMessage());
             }
-        } else {
-            MessageDialog.create().withOwner(this.getComponent()).error(Translate.text("polymesh:errorTemplateDir"));
         }
+
     }
 
     /**
@@ -4263,11 +4130,11 @@ public class PolyMeshEditorWindow extends MeshEditorWindow implements EditingWin
 
     }
 
-    @AllArgsConstructor
-    private class CopyEvent implements WidgetEvent {
-
-        @Getter
-        private final Widget widget;
+    private record CopyEvent(Widget widget) implements WidgetEvent {
+        @Override
+        public Widget getWidget() {
+            return widget;
+        }
     }
 
 }

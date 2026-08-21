@@ -12,16 +12,13 @@ package artofillusion.polymesh;
 import artofillusion.ArtOfIllusion;
 import artofillusion.Plugin;
 
-import java.nio.file.Files;
+
 import java.nio.file.Paths;
 
 public class PMAssetsWatcher implements Plugin {
     @Override
     public void onApplicationStarting() {
         var path = Paths.get(ArtOfIllusion.PLUGIN_DIRECTORY, "PolyMeshTemplates");
-        if (Files.exists(path)) {
-            return;
-        }
         path.toFile().mkdirs();
     }
 }
