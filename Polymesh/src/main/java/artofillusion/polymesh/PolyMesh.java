@@ -19,7 +19,6 @@ import artofillusion.animation.MeshGesture;
 import artofillusion.animation.Skeleton;
 import artofillusion.math.BoundingBox;
 import artofillusion.math.CoordinateSystem;
-import artofillusion.math.RGBColor;
 import artofillusion.math.Vec3;
 import artofillusion.object.FacetedMesh;
 import artofillusion.object.Mesh;
@@ -151,10 +150,14 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     private boolean controlledSmoothing;
 
+    @Getter
     private double minAngle; //data for auto smoothness
+    @Getter
     private double maxAngle; //data for auto smoothness
 
+    @Getter
     private float minSmoothness;
+    @Getter
     private float maxSmoothness;
 
     private boolean[] seams; //true if an edge is a seam
@@ -446,10 +449,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         selectedSeamColor = new Color(preferences.getInt("selectedSeamColor_red", 0),
                 preferences.getInt("selectedSeamColor_green", 162),
                 preferences.getInt("selectedSeamColor_blue", 255));
-        Color transparent = ViewerCanvas.transparentColor.getColor();
-        meshColor = new Color(preferences.getInt("meshColor_red", transparent.getRed()),
-                preferences.getInt("meshColor_green", transparent.getGreen()),
-                preferences.getInt("meshColor_blue", transparent.getBlue()));
+
         selectedFaceColor = new Color(preferences.getInt("selectedFaceColor_red", 255),
                 preferences.getInt("selectedFaceColor_green", 102),
                 preferences.getInt("selectedFaceColor_blue", 255));
@@ -483,10 +483,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         preferences.putInt("selectedSeamColor_red", 0);
         preferences.putInt("selectedSeamColor_green", 162);
         preferences.putInt("selectedSeamColor_blue", 255);
-        Color transparent = ViewerCanvas.transparentColor.getColor();
-        preferences.putInt("meshColor_red", transparent.getRed());
-        preferences.putInt("meshColor_green", transparent.getGreen());
-        preferences.putInt("meshColor_blue", transparent.getBlue());
+
         preferences.putInt("selectedFaceColor_red", 255);
         preferences.putInt("selectedFaceColor_green", 102);
         preferences.putInt("selectedFaceColor_blue", 255);
@@ -518,9 +515,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         preferences.putInt("selectedSeamColor_red", selectedSeamColor.getRed());
         preferences.putInt("selectedSeamColor_green", selectedSeamColor.getGreen());
         preferences.putInt("selectedSeamColor_blue", selectedSeamColor.getBlue());
-        preferences.putInt("meshColor_red", meshColor.getRed());
-        preferences.putInt("meshColor_green", meshColor.getGreen());
-        preferences.putInt("meshColor_blue", meshColor.getBlue());
+
         preferences.putInt("selectedFaceColor_red", selectedFaceColor.getRed());
         preferences.putInt("selectedFaceColor_green", selectedFaceColor.getGreen());
         preferences.putInt("selectedFaceColor_blue", selectedFaceColor.getBlue());
@@ -1277,7 +1272,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         selectedEdgeColor = mesh.selectedEdgeColor;
         seamColor = mesh.seamColor;
         selectedSeamColor = mesh.selectedSeamColor;
-        meshColor = mesh.meshColor;
+
         selectedFaceColor = mesh.selectedFaceColor;
 
         handleSize = mesh.handleSize;
@@ -1313,9 +1308,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      */
     @Override
     public WireframeMesh getWireframeMesh() {
-        Vec3[] point;
-        int[] from;
-        int[] to;
 
         if (cachedWire != null) {
             return cachedWire;
@@ -1327,9 +1319,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
             cachedWire = mirroredMesh.getWireframeMesh();
             return cachedWire;
         }
-        point = new Vec3[vertices.length];
-        from = new int[edges.length];
-        to = new int[edges.length];
+        Vec3[] point = new Vec3[vertices.length];
+        int[] from = new int[edges.length];
+        int[] to = new int[edges.length];
         for (int i = 0; i < vertices.length; ++i) {
             point[i] = vertices[i].r;
         }
@@ -11815,8 +11807,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         for (int i = 0; i < vertices.length; ++i) {
             ed = vertices[i].edge;
             counter = 0;
-            while (edges[edges[ed].hedge].next != vertices[i].edge
-                    && counter < edges.length) {
+            while (edges[edges[ed].hedge].next != vertices[i].edge && counter < edges.length) {
                 ed = edges[edges[ed].hedge].next;
                 counter++;
             }
@@ -12031,17 +12022,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         resetMesh();
     }
 
-    public double getMinAngle() {
-        return minAngle;
-    }
-
     public void setMinAngle(double minAngle) {
         this.minAngle = minAngle;
         resetMesh();
-    }
-
-    public double getMaxAngle() {
-        return maxAngle;
     }
 
     public void setMaxAngle(double maxAngle) {
@@ -12049,17 +12032,9 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         resetMesh();
     }
 
-    public float getMinSmoothness() {
-        return minSmoothness;
-    }
-
     public void setMinSmoothness(float minSmoothness) {
         this.minSmoothness = minSmoothness;
         resetMesh();
-    }
-
-    public float getMaxSmoothness() {
-        return maxSmoothness;
     }
 
     public void setMaxSmoothness(float maxSmoothness) {
@@ -12823,7 +12798,7 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
      * Winged mesh face structure
      *
      * @author Francois Guillet
-     * @created december 19, 2004
+     * @created December 19, 2004
      */
     public static class Wface {
 
@@ -12890,14 +12865,6 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
 
     public void setEdgeColor(Color edgeColor) {
         this.edgeColor = edgeColor;
-    }
-
-    public Color getMeshColor() {
-        return useCustomColors ? meshColor : ViewerCanvas.surfaceColor;
-    }
-
-    public void setMeshColor(Color meshColor) {
-        this.meshColor = meshColor;
     }
 
     public Color getSelectedFaceColor() {
@@ -12984,37 +12951,4 @@ public final class PolyMesh extends Object3D implements FacetedMesh {
         this.useCustomColors = useCustomColors;
     }
 
-    public RGBColor ColorToRGB(Color color) {
-        return new RGBColor(((float) color.getRed()) / 255.0f, ((float) color.getGreen()) / 255.0f, ((float) color.getBlue()) / 255.0f);
-    }
-
-    private static class PolyMeshCustomColors {
-
-        private Color vertColor;
-        private Color selectedVertColor;
-        private Color edgeColor;
-        private Color selectedEdgeColor;
-
-        private Color seamColor;
-        private Color selectedSeamColor;
-        private Color selectedFaceColor;
-        private Color meshColor;
-
-        private void writeColor(DataOutputStream out, Color color) throws IOException {
-            out.writeInt(color.getRed());
-            out.writeInt(color.getGreen());
-            out.writeInt(color.getBlue());
-        }
-
-        public void write(DataOutputStream out) throws IOException {
-            writeColor(out, vertColor);
-            writeColor(out, selectedVertColor);
-            writeColor(out, edgeColor);
-            writeColor(out, selectedEdgeColor);
-            writeColor(out, seamColor);
-            writeColor(out, selectedSeamColor);
-            writeColor(out, meshColor);
-            writeColor(out, selectedFaceColor);
-        }
-    }
 }
