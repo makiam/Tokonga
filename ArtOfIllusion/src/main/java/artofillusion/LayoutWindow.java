@@ -1967,8 +1967,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         }
         UndoRecord undo = new UndoRecord(this);
         Set<Object3D> scaledObjects = new HashSet<>();
-        for (int i = 0; i < sel.length; i++) {
-            info = theScene.getObject(sel[i]);
+        for (var si: sel) {
+            info = theScene.getObject(si);
             obj = info.getObject();
             coords = info.getCoords();
             if (!scaledObjects.contains(obj)) {
@@ -2018,9 +2018,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
                 scaledObjects.add(obj);
             }
         }
-        for (int i = 0; i < sel.length; i++) {
-            info = theScene.getObject(sel[i]);
-            theScene.objectModified(info.getObject());
+        for (var si: sel) {
+            theScene.objectModified(theScene.getObject(si).getObject());
         }
         List<ObjectInfo> modified = new ArrayList<>();
         for (int index : sel) {
@@ -2093,8 +2092,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         // Determine the position to align the objects to.
         alignTo = new Vec3();
 
-        for (int i = 0; i < sel.length; i++) {
-            info = theScene.getObject(sel[i]);
+        for (var si: sel) {
+            info = theScene.getObject(si);
             coords = info.getCoords();
             bounds = info.getBounds();
             bounds = bounds.transformAndOutset(coords.fromLocal());
@@ -2137,8 +2136,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         alignTo.scale(1.0 / sel.length);
 
         // Now transform all of the objects.
-        for (int i = 0; i < sel.length; i++) {
-            info = theScene.getObject(sel[i]);
+        for (var si: sel) {
+            info = theScene.getObject(si);
             coords = info.getCoords();
             bounds = info.getBounds();
             bounds = bounds.transformAndOutset(coords.fromLocal());
@@ -2189,8 +2188,8 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         int count = 0;
         ObjectInfo[] obj;
 
-        for (i = 0; i < sel.length; i++) {
-            if (theScene.getObject(sel[i]).getObject().canSetTexture()) {
+        for (var si: sel) {
+            if (theScene.getObject(si).getObject().canSetTexture()) {
                 count++;
             }
         }

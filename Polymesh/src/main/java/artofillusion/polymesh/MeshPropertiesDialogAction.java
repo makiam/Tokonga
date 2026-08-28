@@ -1,4 +1,4 @@
-/* Copyright (C) 2023 Maksim Khramov
+/* Copyright (C) 2023-2026 Maksim Khramov
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
    Foundation; either version 2 of the License, or (at your option) any later version.
@@ -35,7 +35,7 @@ public class MeshPropertiesDialogAction {
         ColorButton selectedEdgeColorButton = new ColorButton(mesh.getSelectedEdgeColor());
         ColorButton seamColorButton = new ColorButton(mesh.getSeamColor());
         ColorButton selectedSeamColorButton = new ColorButton(mesh.getSelectedSeamColor());
-        ColorButton meshColorButton = new ColorButton(mesh.getMeshColor());
+
         ColorButton selectedFaceColorButton = new ColorButton(mesh.getSelectedFaceColor());
         BSpinner handleSpinner = new BSpinner(mesh.getHandleSize(), 2, 100, 1);
         BCheckBox useCustomColors = new BCheckBox(Translate.text("polymesh:useCustomColors"), mesh.useCustomColors());
@@ -61,7 +61,7 @@ public class MeshPropertiesDialogAction {
         propertiesPanel.add(selectedEdgeColorButton, 1, 4, widgetLayout);
         propertiesPanel.add(seamColorButton, 1, 5, widgetLayout);
         propertiesPanel.add(selectedSeamColorButton, 1, 6, widgetLayout);
-        propertiesPanel.add(meshColorButton, 1, 7, widgetLayout);
+
         propertiesPanel.add(selectedFaceColorButton, 1, 8, widgetLayout);
         propertiesPanel.add(handleSpinner, 1, 9, widgetLayout);
 
@@ -86,7 +86,7 @@ public class MeshPropertiesDialogAction {
                 mesh.setSelectedEdgeColor(selectedEdgeColorButton.getColor());
                 mesh.setSeamColor(seamColorButton.getColor());
                 mesh.setSelectedSeamColor(selectedSeamColorButton.getColor());
-                mesh.setMeshColor(meshColorButton.getColor());
+
                 mesh.setSelectedFaceColor(selectedFaceColorButton.getColor());
                 mesh.setHandleSize(((Integer) handleSpinner.getValue()));
             }
