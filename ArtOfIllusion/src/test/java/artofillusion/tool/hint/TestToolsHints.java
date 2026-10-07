@@ -37,6 +37,7 @@ import artofillusion.animation.SkeletonTool;
 import artofillusion.test.util.RegisterTestResources;
 import artofillusion.test.util.SetupLocale;
 import artofillusion.test.util.SetupLookAndFeel;
+import artofillusion.test.util.SetupTheme;
 import artofillusion.texture.MoveUVViewTool;
 import artofillusion.ui.EditingTool;
 import artofillusion.ui.GenericTool;
@@ -49,7 +50,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
  *
  * @author MaksK
  */
-@ExtendWith({SetupLocale.class, SetupLookAndFeel.class, RegisterTestResources.class})  
+@ExtendWith({SetupLocale.class, SetupLookAndFeel.class, RegisterTestResources.class, SetupTheme.class})  
 public class TestToolsHints {
 
 

@@ -33,9 +33,13 @@ public class SetupTheme implements BeforeAllCallback {
         if (registered.compareAndSet(false, true)) {
             try {
                 PluginRegistry.registerResource("UITheme", "default", ArtOfIllusion.class.getClassLoader(), "artofillusion/Icons/defaultTheme.xml", null);
-                ThemeManager.initThemes();
             } catch (IllegalArgumentException iae) {
                 // Already registered by application startup or previous test class
+            }
+            try {
+                ThemeManager.initThemes();
+            } catch (IllegalStateException ise) {
+                // Themes already initialized by previous test class
             }
         }
     }
