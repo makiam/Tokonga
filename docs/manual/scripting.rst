@@ -1,9 +1,14 @@
+.. _scripting:
+
 Scripting
 #########
 
 There are a wealth of possibilities available via the scripting feature which utilises the Groovy and Beanshell
 scripting languages to allow you to program new objects, tools and many other features. The scripting feature also
 allows use of the Art of Illusion methods and members found in the AoI source code.
+
+The older BeanShell scripting language is going to be removed in a future release. BeanShell scripts can already be
+converted to Groovy - see :ref:`Migrating Scripts From BeanShell<beanshell_migration>`.
 
 The scripting tools are located in the lower section of the **Tools** menu. A full description and tutorial on the
 scripting feature is available on the documentation page of the main `Art of Illusion website <http://www.artofillusion.org>`_.
@@ -76,7 +81,7 @@ script as in the example below:
 
 .. code-block:: java
 
-   UIManager.setLookAndFeel("com.birosoft.liquid.LiquidLookAndFeel");
+   UIManager.setLookAndFeel("com.formdev.flatlaf.FlatLightLaf");
 
 The part in quotes is the full path to the actual LookAndFeel class which will vary according to the look and feel you
 are using. The documentation that comes with it should give the full path. Save the Startup script with any name - it
@@ -172,7 +177,7 @@ file. You might also want to manually add a URL to this file (the format is stra
 must be set to the number of the URL you add to the file. Be warned, though, that any manual addition of a URL to this
 file is temporary since a fresh list of repositories will be downloaded at next connection.
 
-**Filters** allow the seach to be tailored for particular types of script/plugin.
+**Filters** allow the search to be tailored for particular types of script/plugin.
 
 The Proxy section makes it possible to use a proxy if access through a firewall is required.
 
