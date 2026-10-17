@@ -132,7 +132,7 @@ public class SplashScreen extends JDialog implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         Object value = event.getNewValue();
-        log.info("Active window changed from: {} to {}", event.getOldValue(), value);
+        log.debug("Active window changed from: {} to {}", event.getOldValue(), value);
         if (value instanceof Dialog && value != SplashScreen.this) {
             setVisible(false);
         } else if (!isVisible()) {
