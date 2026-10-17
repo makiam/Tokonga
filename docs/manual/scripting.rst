@@ -82,6 +82,27 @@ The part in quotes is the full path to the actual LookAndFeel class which will v
 are using. The documentation that comes with it should give the full path. Save the Startup script with any name - it
 will then be executed at startup and your required look and feel will be loaded.
 
+.. _script_output:
+
+Script Output
+*************
+
+Scripts can print messages while they are running. In Groovy, ``print``, ``println`` and ``printf`` write their
+output to the **Script Output** window, which AoI opens automatically the first time a script writes anything
+to it::
+
+   println "Objects in scene: " + scene.getNumObjects()
+
+The same is true for Object, Tool and Startup scripts. In BeanShell, use the built-in ``print()`` command for
+the same purpose.
+
+Note that this is *not* the same as ``System.out.println()``. Anything written to ``System.out`` goes to the
+console (terminal) from which AoI was started and never appears in the **Script Output** window, so use
+``println`` when you want to see the text inside AoI.
+
+Groovy scripts also provide a few helpers: ``undo()`` and ``redo()`` perform the corresponding actions on the
+current scene window, and ``log`` writes to the application log, e.g. ``log.info("Value is {}", 3)``.
+
 .. _SPManager:
 
 Scripts and Plugins Manager

@@ -32,9 +32,10 @@ public class GroovyScriptEngine implements ScriptEngine {
     private int numImports = 0;
 
     private final Map<String, Script> cache = new HashMap<>();
+    private final Binding binding = new Binding();
+    private volatile PrintWriter scriptOutput = new PrintWriter(System.out, true);
 
     public GroovyScriptEngine(ClassLoader parent) {
-        var binding = new Binding();
         binding.setVariable("undo", new WindowApiClosure(null) {
             public Void doCall() {
                 getLayout().undoCommand();
@@ -73,7 +74,10 @@ public class GroovyScriptEngine implements ScriptEngine {
 
     @Override
     public void setOutput(PrintStream out) {
-        config.setOutput(new PrintWriter(out, true));
+        // CompilerConfiguration.setOutput() is deprecated in Groovy 6 and has no effect.
+        // Script.print()/println()/printf() resolve the "out" variable from the script binding.
+        scriptOutput = new PrintWriter(out, true);
+        binding.setVariable("out", scriptOutput);
     }
 
     @Override
@@ -125,12 +129,13 @@ public class GroovyScriptEngine implements ScriptEngine {
 
         public CompiledToolScript(Script script) {
             this.script = script;
-            script.setProperty("out", config.getOutput());
         }
 
         @Override
         public void execute(LayoutWindow window) throws ScriptException {
+            script.setProperty("out", scriptOutput);
             script.setProperty("window", window);
+            script.setProperty("scene", window.getScene());
             try {
                 script.run();
             } catch (Exception ex) {
@@ -155,11 +160,11 @@ public class GroovyScriptEngine implements ScriptEngine {
 
         public CompiledObjectScript(Script script) {
             this.script = script;
-            script.setProperty("out", config.getOutput());
         }
 
         @Override
         public void execute(ScriptedObjectController controller) {
+            script.setProperty("out", scriptOutput);
             script.setProperty("script", controller);
             script.run();
         }
