@@ -24,6 +24,7 @@ import artofillusion.util.*;
 import java.beans.*;
 import java.io.*;
 import java.lang.reflect.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
@@ -107,7 +108,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
     public static final int ENVIRON_DIFFUSE = 1;
     public static final int ENVIRON_EMISSIVE = 2;
 
-    private static final byte[] FILE_PREFIX = {'A', 'o', 'I', 'S', 'c', 'e', 'n', 'e'};
+    private static final byte[] SIGNATURE = "AoIScene".getBytes(StandardCharsets.US_ASCII);
+    private static final byte[] FILE_PREFIX = SIGNATURE;
 
     public Scene() {
         UniformTexture defTex = new UniformTexture();
@@ -230,6 +232,8 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * themselves to reflect their dependencies on other parts of the scene.
      */
     public void applyTracksAfterModification(List<ObjectInfo> changedObjects) {
+
+        log.info("Applying tracks to {} objects...", changedObjects.size());
         boolean[] changed = new boolean[objects.size()];
         boolean[] processed = new boolean[objects.size()];
 
@@ -529,7 +533,7 @@ public final class Scene implements ObjectsContainer, MaterialsContainer, Textur
      * added to it to undo this operation.
      */
     public void addObject(ObjectInfo info, UndoRecord undo) {
-        log.info("Add object: {}", info);
+        log.debug("Add object: {}", info);
         addObject(info, objects.size(), undo);
     }
 
