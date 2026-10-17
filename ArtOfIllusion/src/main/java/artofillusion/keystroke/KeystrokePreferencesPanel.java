@@ -119,7 +119,6 @@ public class KeystrokePreferencesPanel extends FormContainer implements Preferen
      * Add a new record.
      */
     private void addRecord() {
-        // Beanshell is the only supported language here
         KeystrokeRecord record = new KeystrokeRecord(0, 0, "", "");
         KeystrokeRecord edited = KeystrokeEditor.showEditor(record, UIUtilities.findWindow(this));
         if (edited == null) {
