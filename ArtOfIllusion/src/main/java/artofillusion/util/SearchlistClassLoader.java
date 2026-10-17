@@ -253,7 +253,7 @@ public class SearchlistClassLoader extends ClassLoader {
         byte[] data;
 
         for (int i = 0; (ldr = getLoader(i)) != null; i++) {
-            log.info("Find class: {}", i);
+            log.debug("Find class: {}", i);
             try {
                 // for shared loaders - just try getting the class
                 if (ldr.isShared()) {
@@ -315,7 +315,7 @@ public class SearchlistClassLoader extends ClassLoader {
         URL url = null;
         Loader ldr;
         for (int i = 0; (ldr = getLoader(i)) != null; i++) {
-            log.info("Find resource: {}", i);
+            log.debug("Find resource: {}", i);
             url = ldr.getLoader().getResource(path);
 
             if (url != null) {
