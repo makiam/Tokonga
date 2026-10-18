@@ -381,7 +381,7 @@ window.setUndoRecord(undo);
 |---|---|---|
 | **Buoy** | 1.1.5 | Swing-based UI framework (custom, `com.github.makiam:Buoy`) |
 | **JOGL** | 2.6.0 | OpenGL rendering in viewports |
-| **Groovy** | 5.0.7 | Scripting (replaced BeanShell) |
+| **Groovy** | 6.0.5 | Scripting|
 | **RSyntaxTextArea** | 3.6.3 | Code editor widget |
 | **XStream** | 1.4.21 | XML parsing (extensions.xml only) |
 | **EventBus** | 3.3.1 | Publish-subscribe between components |

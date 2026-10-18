@@ -25,7 +25,7 @@ Rendering of the scene file is achieved with a fast raster engine or a high qual
 photorealistic images. Motion blur, depth of field, Global Illumination and caustic effects are supported.
 
 In addition, Art of Illusion includes a scripting feature allowing the creation of new types of objects and tools
-amongst virtually unlimited other possibilities via the Beanshell scripting language.
+amongst virtually unlimited other possibilities via the Groovy scripting language.
 
 Plugins and scripts are also available that allow additional objects and tools - see the Scripts and Plugin Manager for
 details of how to find and install these.  This manual only details the basic AoI program - please refer to developers
@@ -330,7 +330,7 @@ Link to External Object
 This is a way of using an object from another AoI file in the current scene via a dynamic link to that file. Using this
 method, changes made to the source object automatically affect any files which have links to that object.  This allows,
 for example, a character model to be created and kept in one file which can then be used in many other scenes  -
-modifcations to the character can then be made to the original file which will then be applied automatically to any
+modifications to the character can then be made to the original file which will then be applied automatically to any
 scene files that have the link.
 
 Selecting this option displays a dialogue, an example of which is shown on the right. This allows the selection of the
@@ -353,7 +353,7 @@ files that have not yet been saved.
 Edit Menu
 =========
 
-The **Edit** menu on the top menu bar contains some very useful selection and basic object manipulatiom tools.
+The **Edit** menu on the top menu bar contains some very useful selection and basic object manipulation tools.
 
 The menu looks like this:
 
@@ -401,10 +401,10 @@ Others can be downloaded with the :ref:`Scripts and Plugins Manager<SPManager>`.
 **Color Schemes** to choose from.
 
 The **Default Editing Tool** is the tool that should be selected in a window when it first appears. You can also press
-the spacebar in a window to quickly toggle between the default tool and another selected tool.
+the Space in a window to quickly toggle between the default tool and another selected tool.
 
 The **Interactive Surface Error** defines the surface accuracy of objects displayed in the main window and the object
-editors. The lower the value, the more acccurate the surface displayed is as shown below. Bear in mind, however, that a
+editors. The lower the value, the more accurate the surface displayed is as shown below. Bear in mind, however, that a
 low surface error will result in a poorer performance in terms of speed.
 
 .. figure:: basics/int_surf_err.jpg
@@ -506,7 +506,7 @@ Edit Functions:
 
 ======   ===================================
 ======   ===================================
-Crtl+Z   Undo/Redo last action
+Ctrl+Z   Undo/Redo last action
 Ctrl+X   Cut the selected object(s) to the clipboard
 Ctrl+C   Copy the selected object(s) to the clipboard
 Ctrl+V   Paste the object(s) from the clipboard into the file
