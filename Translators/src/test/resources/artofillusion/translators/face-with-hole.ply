@@ -1,0 +1,19 @@
+ply
+format ascii 1.0
+comment Single face with a hole (outer + inner loop, not triangulated)
+element vertex 8
+property float x
+property float y
+property float z
+element face 1
+property list uchar int vertex_indices
+end_header
+-1.000000 -1.000000 0.000000
+ 1.000000 -1.000000 0.000000
+ 1.000000  1.000000 0.000000
+-1.000000  1.000000 0.000000
+-0.400000 -0.400000 0.000000
+-0.400000  0.400000 0.000000
+ 0.400000  0.400000 0.000000
+ 0.400000 -0.400000 0.000000
+8 0 1 2 3 4 5 6 7

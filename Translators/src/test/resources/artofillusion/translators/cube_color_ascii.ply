@@ -1,0 +1,27 @@
+ply
+format ascii 1.0
+comment Cube with quad faces (not triangulated)
+element vertex 8
+property byte red
+property byte green
+property byte blue
+property float x
+property float y
+property float z
+element face 6
+property list uchar int vertex_indices
+end_header
+123 123 123 -1.000000 -1.000000 -1.000000
+000 000 000  1.000000 -1.000000 -1.000000
+012 012 012  1.000000  1.000000 -1.000000
+111 111 111 -1.000000  1.000000 -1.000000
+055 055 055 -1.000000 -1.000000  1.000000
+255 255 255  1.000000 -1.000000  1.000000
+000 000 000  1.000000  1.000000  1.000000
+128 128 128 -1.000000  1.000000  1.000000
+4 0 3 2 1
+4 4 5 6 7
+4 0 1 5 4
+4 2 3 7 6
+4 1 2 6 5
+4 0 4 7 3

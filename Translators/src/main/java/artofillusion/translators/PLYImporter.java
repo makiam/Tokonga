@@ -1,3 +1,13 @@
+/* Copyright (C) 2026 by Maksim Khramov
+
+   This program is free software; you can redistribute it and/or modify it under the
+   terms of the GNU General Public License as published by the Free Software
+   Foundation; either version 2 of the License, or (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+   PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.translators;
 
 import artofillusion.ArtOfIllusion;
@@ -9,7 +19,6 @@ import artofillusion.math.Vec3;
 import artofillusion.object.DirectionalLight;
 import artofillusion.object.ObjectInfo;
 import artofillusion.object.SceneCamera;
-import artofillusion.object.TriangleMesh;
 import artofillusion.ui.Translate;
 import buoy.widget.BFrame;
 import buoy.widget.BStandardDialog;
@@ -61,7 +70,7 @@ public class PLYImporter {
         Vec3 center = new Vec3();
         coords = new CoordinateSystem(center, Vec3.vz(), Vec3.vy());
         var mesh = PLYReader.read(f.getPath());
-        info = new ObjectInfo(mesh, coords, f.getName());
+        info = new ObjectInfo(mesh, coords, f.getName().replaceAll("(?i)\\.ply$", ""));
         scene.addObject(info, null);
         return scene;
     }

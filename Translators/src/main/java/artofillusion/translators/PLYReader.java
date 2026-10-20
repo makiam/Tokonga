@@ -1,3 +1,13 @@
+/* Copyright (C) 2026 by Maksim Khramov
+
+   This program is free software; you can redistribute it and/or modify it under the
+   terms of the GNU General Public License as published by the Free Software
+   Foundation; either version 2 of the License, or (at your option) any later version.
+
+   This program is distributed in the hope that it will be useful, but WITHOUT ANY
+   WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+   PARTICULAR PURPOSE.  See the GNU General Public License for more details. */
+
 package artofillusion.translators;
 
 import artofillusion.math.Vec3;
@@ -39,7 +49,9 @@ public class PLYReader {
         String name;
         int count;
         List<PlyProperty> properties = new ArrayList<>();
-        PlyElement(String name, int count) { this.name = name; this.count = count; }
+        PlyElement(String name, int count) {
+            this.name = name; this.count = count;
+        }
     }
 
     // Parsed PLY header information
@@ -92,16 +104,14 @@ public class PLYReader {
             }
 
             // Read data according to format
-            switch (header.format) {
-                case "ascii":
-                    return readAscii(raf, vertexElem.count, faceElem.count, propX, propY, propZ, faceIndicesProp);
-                case "binary_little_endian":
-                    return readBinary(raf, vertexElem.count, faceElem.count, propX, propY, propZ, faceIndicesProp, ByteOrder.LITTLE_ENDIAN);
-                case "binary_big_endian":
-                    return readBinary(raf, vertexElem.count, faceElem.count, propX, propY, propZ, faceIndicesProp, ByteOrder.BIG_ENDIAN);
-                default:
-                    throw new IOException("Unsupported PLY format: " + header.format);
-            }
+            return switch (header.format) {
+                case "ascii" -> readAscii(raf, vertexElem.count, faceElem.count, propX, propY, propZ, faceIndicesProp);
+                case "binary_little_endian" ->
+                        readBinary(raf, vertexElem.count, faceElem.count, propX, propY, propZ, faceIndicesProp, ByteOrder.LITTLE_ENDIAN);
+                case "binary_big_endian" ->
+                        readBinary(raf, vertexElem.count, faceElem.count, propX, propY, propZ, faceIndicesProp, ByteOrder.BIG_ENDIAN);
+                default -> throw new IOException("Unsupported PLY format: " + header.format);
+            };
         }
     }
 
@@ -118,11 +128,17 @@ public class PLYReader {
 
         while ((line = raf.readLine()) != null) {
             line = line.trim();
-            if (line.isEmpty()) continue;
-            if (line.equals("end_header")) break;
+            if (line.isEmpty()) {
+                continue;
+            }
+            if (line.equals("end_header")) {
+                break;
+            }
 
             String[] tokens = line.split("\\s+");
-            if (tokens.length == 0) continue;
+            if (tokens.length == 0) {
+                continue;
+            }
 
             switch (tokens[0]) {
                 case "format":
@@ -166,11 +182,11 @@ public class PLYReader {
             if (line == null) throw new IOException("Unexpected end of file reading vertices.");
             String[] parts = line.trim().split("\\s+");
             // We need to map properties to their values.
-            // Since vertex properties appear in order, we must parse all properties
+            // Since vertex properties appear in order, we must parse all properties,
             // but we only extract x,y,z by their order index.
             // Simpler: assume the first three numeric properties are x,y,z if no mapping.
             // But we have property objects; we can locate them by scanning the property list.
-            // For ascii, we know the order from the header. We'll just parse by position.
+            // For ASCII, we know the order from the header. We'll just parse by position.
             // However, the order is defined by the sequence of property lines.
             // Instead of full mapping, we assume x,y,z are the first three scalar properties.
             // But to be robust, we read all property values and assign based on name.
@@ -282,21 +298,14 @@ public class PLYReader {
 
     // Helper to read an integer from ByteBuffer (used for list counts and indices)
     private static int readIntValue(ByteBuffer buffer, String type) {
-        switch (type) {
-            case "char":
-            case "int8":      return buffer.get();
-            case "uchar":
-            case "uint8":     return buffer.get() & 0xFF;
-            case "short":
-            case "int16":     return buffer.getShort();
-            case "ushort":
-            case "uint16":    return buffer.getShort() & 0xFFFF;
-            case "int":
-            case "int32":     return buffer.getInt();
-            case "uint":
-            case "uint32":    return (int) (buffer.getInt() & 0xFFFFFFFFL);
-            default:
-                throw new IllegalArgumentException("Unsupported integer type for list: " + type);
-        }
+        return switch (type) {
+            case "char", "int8" -> buffer.get();
+            case "uchar", "uint8" -> buffer.get() & 0xFF;
+            case "short", "int16" -> buffer.getShort();
+            case "ushort", "uint16" -> buffer.getShort() & 0xFFFF;
+            case "int", "int32" -> buffer.getInt();
+            case "uint", "uint32" -> (int) (buffer.getInt() & 0xFFFFFFFFL);
+            default -> throw new IllegalArgumentException("Unsupported integer type for list: " + type);
+        };
     }
 }
