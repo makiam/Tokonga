@@ -142,4 +142,33 @@ public class PLYReaderTest {
         Assertions.assertEquals(2452, airplane.getFaceCount());
         Assertions.assertEquals(1335, airplane.getVertices().length);
     }
+
+    @Test
+    @DisplayName("PLYReader should skip unused elements and honour a 32-bit list count")
+    void quad_binary_extras() throws IOException, URISyntaxException {
+        var resource = getClass().getClassLoader()
+                .getResource("artofillusion/translators/quad_binary_extras.ply");
+        Assertions.assertNotNull(resource, "quad_binary_extras.ply not found in classpath");
+        var quad = PLYReader.read(Paths.get(resource.toURI()).toString());
+        Assertions.assertNotNull(quad, "PLYReader should return non-null object");
+        Assertions.assertEquals(2, quad.getFaceCount());
+        Assertions.assertEquals(4, quad.getVertices().length);
+        // double positions must keep full precision, not be truncated to float
+        Assertions.assertEquals(0.1, quad.getVertices()[2].r.y, 1.0e-12);
+    }
+
+    @Test
+    @DisplayName("PLYReader should read 64-bit positions and a list property in the vertex element")
+    void tet_binary_mixed() throws IOException, URISyntaxException {
+        var resource = getClass().getClassLoader()
+                .getResource("artofillusion/translators/tet_binary_mixed.ply");
+        Assertions.assertNotNull(resource, "tet_binary_mixed.ply not found in classpath");
+        var tet = PLYReader.read(Paths.get(resource.toURI()).toString());
+        Assertions.assertNotNull(tet, "PLYReader should return non-null object");
+        Assertions.assertEquals(4, tet.getFaceCount());
+        Assertions.assertEquals(4, tet.getVertices().length);
+        Assertions.assertEquals(1.0, tet.getVertices()[3].r.x, 1.0e-12);
+        Assertions.assertEquals(1.0, tet.getVertices()[3].r.y, 1.0e-12);
+        Assertions.assertEquals(0.0, tet.getVertices()[3].r.z, 1.0e-12);
+    }
 }

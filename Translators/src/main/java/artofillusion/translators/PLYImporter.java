@@ -54,7 +54,9 @@ public class PLYImporter {
             scene.setName(jfc.getSelectedFile().getName());
             ArtOfIllusion.newWindow(scene);
         } catch (Exception ex) {
-            new BStandardDialog("", new String[]{Translate.text("errorLoadingFile"), ex.getMessage() == null ? "" : ex.getMessage()}, BStandardDialog.ERROR).showMessageDialog(parent);
+            String message = ex.getMessage() == null ? "" : ex.getMessage();
+            new BStandardDialog("", new String[] {Translate.text("errorLoadingFile"), message}, BStandardDialog.ERROR)
+                    .showMessageDialog(parent);
         }
     }
 
