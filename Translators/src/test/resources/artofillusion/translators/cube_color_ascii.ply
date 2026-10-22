@@ -2,9 +2,9 @@ ply
 format ascii 1.0
 comment Cube with quad faces (not triangulated)
 element vertex 8
-property byte red
-property byte green
-property byte blue
+property uint8 red
+property uint8 green
+property uint8 blue
 property float x
 property float y
 property float z

@@ -81,9 +81,9 @@ public class PLYReader {
             for (PlyProperty p : vertexElem.properties) {
                 if (!p.isList) {
                     switch (p.name) {
-                        case "x": propX = p; break;
-                        case "y": propY = p; break;
-                        case "z": propZ = p; break;
+                        case "x" -> propX = p;
+                        case "y" -> propY = p;
+                        case "z" -> propZ = p;
                     }
                 }
             }

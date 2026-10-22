@@ -37,7 +37,7 @@ public class PLYImporter {
     public static void importFile(@NotNull BFrame parent)  {
         JFileChooser jfc = new JFileChooser();
         jfc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-        jfc.setDialogTitle(Translate.text("Translators:importOBJ"));
+        jfc.setDialogTitle(Translate.text("Translators:importPLY"));
         Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
 
         FileNameExtensionFilter objFilter = new FileNameExtensionFilter(Translate.text("Translators:fileFilter.ply"), "ply");

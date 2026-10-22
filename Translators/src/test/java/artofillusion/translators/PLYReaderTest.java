@@ -13,6 +13,7 @@ package artofillusion.translators;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -95,5 +96,50 @@ public class PLYReaderTest {
         Assertions.assertNotNull(airplane, "PLYReader should return non-null object");
         Assertions.assertEquals(6, airplane.getFaceCount());
         Assertions.assertEquals(8, airplane.getVertices().length);
+    }
+
+    @Test
+    void icosahedron() throws IOException, URISyntaxException {
+        var resource = getClass().getClassLoader()
+                .getResource("artofillusion/translators/icosahedron.ply");
+        Assertions.assertNotNull(resource, "icosahedron.ply not found in classpath");
+        var icos = PLYReader.read(Paths.get(resource.toURI()).toString());
+        Assertions.assertNotNull(icos, "PLYReader should return non-null object");
+        Assertions.assertEquals(20, icos.getFaceCount());
+        Assertions.assertEquals(12, icos.getVertices().length);
+    }
+
+    @Test
+    void cube_binary_big_endian() throws IOException, URISyntaxException {
+        var resource = getClass().getClassLoader()
+                .getResource("artofillusion/translators/cube_binary_big_endian.ply");
+        Assertions.assertNotNull(resource, "cube_binary_big_endian.ply not found in classpath");
+        var cube = PLYReader.read(Paths.get(resource.toURI()).toString());
+        Assertions.assertNotNull(cube, "PLYReader should return non-null object");
+        Assertions.assertEquals(12, cube.getFaceCount());
+        Assertions.assertEquals(8, cube.getVertices().length);
+    }
+
+    @Test
+    void colored_faces() throws IOException, URISyntaxException {
+        var resource = getClass().getClassLoader()
+                .getResource("artofillusion/translators/tet.ply");
+        Assertions.assertNotNull(resource, "tet.ply not found in classpath");
+        var icos = PLYReader.read(Paths.get(resource.toURI()).toString());
+        Assertions.assertNotNull(icos, "PLYReader should return non-null object");
+        Assertions.assertEquals(4, icos.getFaceCount());
+        Assertions.assertEquals(4, icos.getVertices().length);
+    }
+
+    @Test
+    @DisplayName("PLYReader should read a 32-bit list declaration")
+    void plane_with_uint32_list_declaration() throws IOException, URISyntaxException {
+        var resource = getClass().getClassLoader()
+                .getResource("artofillusion/translators/airplane_2.ply");
+        Assertions.assertNotNull(resource, "airplane_2.ply not found in classpath");
+        var airplane = PLYReader.read(Paths.get(resource.toURI()).toString());
+        Assertions.assertNotNull(airplane, "PLYReader should return non-null object");
+        Assertions.assertEquals(2452, airplane.getFaceCount());
+        Assertions.assertEquals(1335, airplane.getVertices().length);
     }
 }
