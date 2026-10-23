@@ -1,4 +1,5 @@
-/* Changes copyright (C) 2026 by Maksim Khramov
+/*  Copyright (C) 2026 by Maksim Khramov
+    Changes copyright (C) 2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -88,6 +89,9 @@ public final class PLYReader {
         private final Map<String, Element> elements = new LinkedHashMap<>();
     }
 
+    private PLYReader() {
+    }
+
     /**
      * Reads a PLY file.
      *
@@ -140,6 +144,7 @@ public final class PLYReader {
 
     private static int indexOfFaceIndices(Element faceElement) {
         int fallback = -1;
+        int lastResort = -1;
         for (int i = 0; i < faceElement.properties.size(); i++) {
             Property property = faceElement.properties.get(i);
             if (!property.isList()) {
@@ -151,8 +156,11 @@ public final class PLYReader {
             if (property.name.equals("indices") && fallback < 0) {
                 fallback = i;
             }
+            if (property.name.equals("vertex_index") && lastResort < 0) {
+                lastResort = i;
+            }
         }
-        return fallback;
+        return fallback >= 0 ? fallback : lastResort;
     }
 
     // ------------------------------------------------------------------------
@@ -187,6 +195,9 @@ public final class PLYReader {
                 case "element" -> {
                     if (tokens.length < 3) {
                         throw new IOException("Invalid PLY element line: '" + line + "'.");
+                    }
+                    if (header.elements.containsKey(tokens[1])) {
+                        throw new IOException("PLY header declares the '" + tokens[1] + "' element twice.");
                     }
                     currentElement = new Element(tokens[1], parseElementCount(tokens[2], tokens[1]));
                     header.elements.put(tokens[1], currentElement);
@@ -248,14 +259,31 @@ public final class PLYReader {
     }
 
     private static Property listProperty(String name, String countType, String elementType) throws IOException {
-        requireSupportedType(countType, "list count of property '" + name + "'");
-        requireSupportedType(elementType, "list elements of property '" + name + "'");
+        requireIntegerType(countType, "list count of property '" + name + "'");
+        requireIntegerType(elementType, "list elements of property '" + name + "'");
         return new Property(name, elementType, countType);
     }
 
     private static void requireSupportedType(String type, String what) throws IOException {
         if (sizeOf(type) < 0) {
             throw new IOException("Unsupported PLY type '" + type + "' declared for " + what + ".");
+        }
+    }
+
+    /**
+     * List lengths and list entries are read as {@code int}, so only the 8, 16 and 32 bit integer
+     * types are accepted. Rejecting the rest at header-parse time keeps the failure inside the
+     * {@code IOException} contract instead of surfacing as an unchecked exception mid-read.
+     */
+    private static void requireIntegerType(String type, String what) throws IOException {
+        requireSupportedType(type, what);
+        switch (type) {
+            case "char", "uchar", "int8", "uint8", "short", "ushort", "int16", "uint16",
+                 "int", "uint", "int32", "uint32" -> {
+                // supported by readIntValue()
+            }
+            default -> throw new IOException("Unsupported PLY type '" + type + "' declared for " + what
+                    + ": list lengths and indices must be 8, 16 or 32 bit integers.");
         }
     }
 
@@ -270,6 +298,34 @@ public final class PLYReader {
         };
     }
 
+    /**
+     * Rejects headers whose declared record counts cannot possibly be backed by the payload, so a
+     * crafted {@code element vertex 2000000000} line cannot trigger a multi-gigabyte allocation
+     * (which would raise {@link OutOfMemoryError}, an {@code Error} that no importer can catch).
+     */
+    private static void validateDeclaredCounts(Header header, long payloadBytes, boolean binary) throws IOException {
+        long required = 0;
+        for (Element element : header.elements.values()) {
+            required += (long) element.count * minimumRecordSize(element, binary);
+            if (required > payloadBytes) {
+                throw new IOException("PLY header declares " + element.count + " records for the '" + element.name
+                        + "' element, which cannot fit in the remaining " + payloadBytes + " bytes of data.");
+            }
+        }
+    }
+
+    /** Smallest possible size of one record: one character in ASCII, the declared widths in binary. */
+    private static int minimumRecordSize(Element element, boolean binary) {
+        if (!binary) {
+            return 1;
+        }
+        int size = 0;
+        for (Property property : element.properties) {
+            size += property.isList() ? sizeOf(property.countType) : property.size;
+        }
+        return Math.max(size, 1);
+    }
+
     // ------------------------------------------------------------------------
     // ASCII reading
     // ------------------------------------------------------------------------
@@ -278,6 +334,7 @@ public final class PLYReader {
                                           int indexX, int indexY, int indexZ, int indexIndices) throws IOException {
         Element vertexElement = header.elements.get(VERTEX_ELEMENT);
         Element faceElement = header.elements.get(FACE_ELEMENT);
+        validateDeclaredCounts(header, raf.length() - raf.getFilePointer(), false);
         Vec3[] vertices = new Vec3[vertexElement.count];
         List<int[]> polygons = new ArrayList<>(faceElement.count);
 
@@ -419,6 +476,7 @@ public final class PLYReader {
         if (dataLength > Integer.MAX_VALUE) {
             throw new IOException("Binary PLY data is too large: " + dataLength + " bytes.");
         }
+        validateDeclaredCounts(header, dataLength, true);
         byte[] data = new byte[(int) dataLength];
         raf.readFully(data);
         ByteBuffer buffer = ByteBuffer.wrap(data).order(order);
@@ -534,7 +592,7 @@ public final class PLYReader {
 
     private static int readListLength(ByteBuffer buffer, Property property) throws IOException {
         int count = readIntValue(buffer, property.countType);
-        if (count < 0 || count > buffer.remaining()) {
+        if (count < 0 || (long) count * property.size > buffer.remaining()) {
             throw new IOException("Invalid length " + count + " for list property '" + property.name + "'.");
         }
         return count;
@@ -597,7 +655,12 @@ public final class PLYReader {
         return value;
     }
 
-    /** Reads a list length or index, honoring the declared integer width. */
+    /**
+     * Reads a list length or index, honoring the declared integer width. The result is a signed
+     * {@code int}, so a {@code uint}/{@code uint32} value at or above 2^31 comes back negative and is
+     * rejected by the caller's range check — deliberate, since Java arrays cannot hold that many
+     * elements anyway.
+     */
     private static int readIntValue(ByteBuffer buffer, String type) throws IOException {
         int index = buffer.position();
         int value = switch (type) {
@@ -619,6 +682,7 @@ public final class PLYReader {
     /** Fan triangulates every polygon and validates the indices before handing them to TriangleMesh. */
     private static TriangleMesh buildMesh(Vec3[] vertices, List<int[]> polygons) throws IOException {
         List<int[]> triangles = new ArrayList<>(polygons.size());
+        int triangulated = 0;
         for (int f = 0; f < polygons.size(); f++) {
             int[] polygon = polygons.get(f);
             if (polygon.length < 3) {
@@ -631,6 +695,9 @@ public final class PLYReader {
                             + ", but the file declares " + vertices.length + " vertices.");
                 }
             }
+            if (polygon.length > 3) {
+                triangulated++;
+            }
             for (int i = 1; i < polygon.length - 1; i++) {
                 if (polygon[0] == polygon[i] || polygon[i] == polygon[i + 1] || polygon[0] == polygon[i + 1]) {
                     log.debug("Skipping degenerate triangle ({}, {}, {}) of face {}",
@@ -639,6 +706,10 @@ public final class PLYReader {
                 }
                 triangles.add(new int[] {polygon[0], polygon[i], polygon[i + 1]});
             }
+        }
+        if (triangulated > 0) {
+            log.debug("Fan triangulated {} polygon(s) into {} triangles; concave faces may be filled",
+                    triangulated, triangles.size());
         }
         return new TriangleMesh(vertices, triangles.toArray(new int[0][]));
     }

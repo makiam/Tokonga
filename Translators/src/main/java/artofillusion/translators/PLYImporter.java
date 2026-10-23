@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 @Slf4j
@@ -40,10 +41,10 @@ public class PLYImporter {
         jfc.setDialogTitle(Translate.text("Translators:importPLY"));
         Optional.ofNullable(ArtOfIllusion.getCurrentDirectory()).ifPresent(dir -> jfc.setCurrentDirectory(new File(dir)));
 
-        FileNameExtensionFilter objFilter = new FileNameExtensionFilter(Translate.text("Translators:fileFilter.ply"), "ply");
-        jfc.addChoosableFileFilter(objFilter);
+        FileNameExtensionFilter plyFilter = new FileNameExtensionFilter(Translate.text("Translators:fileFilter.ply"), "ply");
+        jfc.addChoosableFileFilter(plyFilter);
         jfc.setAcceptAllFileFilterUsed(true);
-        jfc.setFileFilter(objFilter);
+        jfc.setFileFilter(plyFilter);
         if (jfc.showOpenDialog(parent.getComponent()) != JFileChooser.APPROVE_OPTION) {
             return;
         }
@@ -60,7 +61,7 @@ public class PLYImporter {
         }
     }
 
-    private static Scene importFile(File f) throws Exception {
+    private static Scene importFile(File f) throws IOException {
         var scene = new Scene();
         CoordinateSystem coords = new CoordinateSystem(new Vec3(0.0, 0.0, Camera.DEFAULT_DISTANCE_TO_SCREEN), new Vec3(0.0, 0.0, -1.0), Vec3.vy());
         ObjectInfo info = new ObjectInfo(new SceneCamera(), coords, "Camera 1");

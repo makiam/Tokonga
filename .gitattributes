@@ -4,3 +4,6 @@
 *.html text=auto
 *.txt text=auto
 *.md text=auto
+
+# PLY fixtures hold binary payloads too; never apply line-ending conversion
+*.ply -text
