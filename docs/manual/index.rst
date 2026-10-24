@@ -18,4 +18,5 @@ Art of Illusion Manual
    rendering
    animation
    scripting
+   beanshell_migration
    view_management
