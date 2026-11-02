@@ -10,6 +10,7 @@
 
 package artofillusion;
 
+
 import groovy.lang.GroovyShell;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -24,8 +25,19 @@ public final class AppShell {
   public static GroovyShell getShell() {
     if (shell == null) {
       CompilerConfiguration config = new CompilerConfiguration();
+
       ImportCustomizer ic = new ImportCustomizer();
-      ic.addStarImports(ArtOfIllusion.class.getPackage().getName());
+      ic.addStarImports("artofillusion.");
+      ic.addStarImports("artofillusion.image.");
+      ic.addStarImports("artofillusion.material.");
+      ic.addStarImports("artofillusion.math.");
+      ic.addStarImports("artofillusion.object.");
+      ic.addStarImports("artofillusion.script.");
+      ic.addStarImports("artofillusion.texture.");
+      ic.addStarImports("artofillusion.procedural.");
+      ic.addStarImports("artofillusion.ui.");
+      ic.addStarImports("buoy.event.");
+      ic.addStarImports("buoy.widget.");
       config.addCompilationCustomizers(ic);
       shell = new GroovyShell(config);
     }
