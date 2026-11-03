@@ -575,7 +575,7 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         toolsMenu.add(scriptMenu = Translate.menu("scripts"));
         rebuildScriptsMenu();
         BMenuItem nse;
-        toolsMenu.add(nse = new BMenuItem("New Script"));
+        toolsMenu.add(nse = new BMenuItem("New Script Editor"));
         nse.getComponent().addActionListener(e -> SwingUtilities.invokeLater(() -> new ScriptEditor(this).setVisible(true)));
 
     }

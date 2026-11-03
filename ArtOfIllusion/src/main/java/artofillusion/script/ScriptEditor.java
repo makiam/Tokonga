@@ -15,8 +15,10 @@ import artofillusion.ArtOfIllusion;
 import artofillusion.LayoutWindow;
 import artofillusion.ui.EditingWindow;
 import artofillusion.ui.Translate;
+import groovy.lang.Closure;
 import lombok.extern.slf4j.Slf4j;
 import org.codehaus.groovy.control.MultipleCompilationErrorsException;
+import org.codehaus.groovy.runtime.MethodClosure;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -46,6 +48,7 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -517,8 +520,9 @@ public class ScriptEditor extends JFrame implements ChangeListener {
                 script.setProperty("window", ScriptEditor.this.layout);
                 script.setProperty("scene", ScriptEditor.this.layout.getScene());
                 script.setProperty("out", capture);
-
-
+                script.setProperty("undo", new MethodClosure(ScriptEditor.this.layout, "undoCommand"));
+                script.setProperty("redo", new MethodClosure(ScriptEditor.this.layout, "redoCommand"));
+                script.setProperty("log", new LoggerClosure(null));
                 script.run();
             } catch (Throwable ex) {
                 log.atError().setCause(ex).log("Script execution failed");
@@ -527,6 +531,24 @@ public class ScriptEditor extends JFrame implements ChangeListener {
                 capture.flush();
                 capture.close();
             }
+        }
+    }
+
+    private class LoggerClosure extends Closure<Void> {
+        private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ArtOfIllusion.class);
+
+        public LoggerClosure(Object owner) {
+            super(owner);
+        }
+
+        public Void doCall() { return null; }
+        public Void doCall(String format, Object... arguments) {
+            logger.info(format, arguments);
+            return null;
+        }
+        public Void doCall(Object... arguments) {
+            logger.info("Log: {}", Arrays.toString(arguments));
+            return null;
         }
     }
 }
