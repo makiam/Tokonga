@@ -24,6 +24,7 @@ import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
+import org.jspecify.annotations.NonNull;
 
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
@@ -86,10 +87,9 @@ public class ScriptEditor extends JFrame implements ChangeListener {
     private JMenu file;
     private JMenu edit;
     private JMenuItem clearOutput;
-    private JPanel statusPanel;
     private JLabel status;
     private JLabel pos;
-    private LayoutWindow layout;
+    private final LayoutWindow layout;
     private File currentFile;
     private boolean modified;
 
@@ -372,7 +372,7 @@ public class ScriptEditor extends JFrame implements ChangeListener {
             }
 
             @Override
-            public void write(byte[] b, int off, int len) {
+            public void write(byte @NonNull [] b, int off, int len) {
                 appendOutput(new String(b, off, len, StandardCharsets.UTF_8));
             }
         };
@@ -445,7 +445,7 @@ public class ScriptEditor extends JFrame implements ChangeListener {
     }
 
     private void initStatusPanel() {
-        statusPanel = new JPanel(new GridBagLayout());
+        JPanel statusPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
         // First horizontal separator (spans full row)
@@ -534,7 +534,7 @@ public class ScriptEditor extends JFrame implements ChangeListener {
         }
     }
 
-    private class LoggerClosure extends Closure<Void> {
+    private static class LoggerClosure extends Closure<Void> {
         private final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ArtOfIllusion.class);
 
         public LoggerClosure(Object owner) {
