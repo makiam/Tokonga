@@ -513,9 +513,9 @@ public class ScriptEditor extends JFrame implements ChangeListener {
                 log.atError().setCause(mce).log("Script compilation failed");
                 appendOutput(mce.getMessage());
                 var de = mce.getErrorCollector().getError(0).toDiagnostic();
-                var cс = de.column();
+                var column = de.column();
                 var line = de.line();
-                setCaretPosition(line - 1, cс - 1);
+                setCaretPosition(line - 1, column - 1);
                 return;
             } catch (Exception ex) {
                 log.atError().setCause(ex).log("Unable to compile script");
