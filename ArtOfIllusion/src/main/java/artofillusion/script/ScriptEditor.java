@@ -399,6 +399,11 @@ public class ScriptEditor extends JFrame implements ChangeListener {
         int column = offset - element.getElement(row).getStartOffset();
         pos.setText(row + " : " + column);
     }
+
+    private void setCaretPosition(int row, int column) {
+        Document doc = editor.getDocument();
+        editor.setCaretPosition(doc.getDefaultRootElement().getElement(row).getStartOffset() + column);
+    }
     /**
      * Called by the constructors to init the <code>JFrame</code> properly.
      */
@@ -507,7 +512,10 @@ public class ScriptEditor extends JFrame implements ChangeListener {
             } catch (MultipleCompilationErrorsException mce) {
                 log.atError().setCause(mce).log("Script compilation failed");
                 appendOutput(mce.getMessage());
-
+                var de = mce.getErrorCollector().getError(0).toDiagnostic();
+                var cс = de.column();
+                var line = de.line();
+                setCaretPosition(line - 1, cс - 1);
                 return;
             } catch (Exception ex) {
                 log.atError().setCause(ex).log("Unable to compile script");
