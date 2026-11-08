@@ -13,6 +13,7 @@ package artofillusion.script;
 
 import artofillusion.ArtOfIllusion;
 import artofillusion.LayoutWindow;
+import artofillusion.PluginRegistry;
 import artofillusion.ui.EditingWindow;
 import artofillusion.ui.Translate;
 import groovy.lang.Closure;
@@ -51,7 +52,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
+import java.util.Objects;
 
 
 @Slf4j
@@ -177,10 +178,13 @@ public class ScriptEditor extends JFrame implements ChangeListener {
     }
 
     private void createFileMenu() {
-        file.add(createMenuItem("newScript", KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), e -> newScript()));
-        file.add(createMenuItem("menu.open", KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), e -> openScript()));
+        var mi = file.add(createMenuItem("newScript", KeyStroke.getKeyStroke(KeyEvent.VK_N, KeyEvent.CTRL_DOWN_MASK), e -> newScript()));
+        mi.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-new-16.png"))));
+        mi = file.add(createMenuItem("menu.open", KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK), e -> openScript()));
+        mi.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-load-16.png"))));
         file.addSeparator();
-        file.add(createMenuItem("menu.save", KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), e -> saveScript()));
+        mi = file.add(createMenuItem("menu.save", KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK), e -> saveScript()));
+        mi.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-save-16.png"))));
         file.add(createMenuItem("menu.saveas", KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK), e -> saveScriptAs()));
         file.addSeparator();
         file.add(createMenuItem("menu.close", KeyStroke.getKeyStroke(KeyEvent.VK_W, KeyEvent.CTRL_DOWN_MASK), e -> closeScript()));
@@ -194,15 +198,21 @@ public class ScriptEditor extends JFrame implements ChangeListener {
     }
 
     private void createEditMenu() {
-        edit.add(new JMenuItem(RTextArea.getAction(RTextArea.UNDO_ACTION)));
-        edit.add(new JMenuItem(RTextArea.getAction(RTextArea.REDO_ACTION)));
+        var mi = edit.add(new JMenuItem(RTextArea.getAction(RTextArea.UNDO_ACTION)));
+        mi.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-undo-16.png"))));
+        mi = edit.add(new JMenuItem(RTextArea.getAction(RTextArea.REDO_ACTION)));
+        mi.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-redo-16.png"))));
         edit.addSeparator();
-        edit.add(new JMenuItem(RTextArea.getAction(RTextArea.CUT_ACTION)));
-        edit.add(new JMenuItem(RTextArea.getAction(RTextArea.COPY_ACTION)));
-        edit.add(new JMenuItem(RTextArea.getAction(RTextArea.PASTE_ACTION)));
-        edit.add(new JMenuItem(RTextArea.getAction(RTextArea.DELETE_ACTION)));
+        mi = edit.add(new JMenuItem(RTextArea.getAction(RTextArea.CUT_ACTION)));
+        mi.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-cut-16.png"))));
+        mi = edit.add(new JMenuItem(RTextArea.getAction(RTextArea.COPY_ACTION)));
+        mi.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-copy-16.png"))));
+        mi = edit.add(new JMenuItem(RTextArea.getAction(RTextArea.PASTE_ACTION)));
+        mi.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-paste-16.png"))));
+        mi = edit.add(new JMenuItem(RTextArea.getAction(RTextArea.DELETE_ACTION)));
+        mi.setIcon(new ImageIcon(Objects.requireNonNull(getClass().getResource("/artofillusion/layout-icons/icons8-delete-16.png"))));
         edit.addSeparator();
-        edit.add(new JMenuItem(RTextArea.getAction(RTextArea.SELECT_ALL_ACTION)));
+        mi = edit.add(new JMenuItem(RTextArea.getAction(RTextArea.SELECT_ALL_ACTION)));
     }
 
     private void newScript() {
