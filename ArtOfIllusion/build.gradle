@@ -156,6 +156,6 @@ tasks.register("createMacVolume", Exec) {
             commandLine "ln", "-s", "/Applications"
             commandLine "hdiutil", "create", "-srcfolder", "${srcFolder}", "-fs", "HFS+", "-format", "UDZO", "${volumeFileName}", "-volname", "${volumeName}"
         } else {
-            println "Bypass Mac DMG... This requred to run macos hdiutil application"
+            println "Bypass Mac DMG... This required to run macos hdiutil application"
         }
 }

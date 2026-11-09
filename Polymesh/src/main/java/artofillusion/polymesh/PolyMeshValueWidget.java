@@ -61,7 +61,7 @@ public class PolyMeshValueWidget extends BorderContainer {
     private BSlider valueSlider;
     private BSpinner minSpinner;
     private BSpinner maxSpinner;
-    private PMValueField valueField;
+    private ValueField valueField;
     private BCheckBox retainValueCB;
     private double valueMin;
     private double valueMax;
@@ -93,7 +93,7 @@ public class PolyMeshValueWidget extends BorderContainer {
             retainValueCB = ((BCheckBox) decoder.getObject("retainValueCB"));
             retainValueCB.setText(Translate.text("polymesh:" + retainValueCB.getText()));
             minSpinner = ((BSpinner) decoder.getObject("minSpinner"));
-            valueField = new PMValueField(0.0, ValueField.NONE);
+            valueField = new ValueField(0.0, ValueField.NONE);
             valueField.setTextField((BTextField) decoder.getObject("valueField"));
             setSpinnerColumns(minSpinner, 2);
             setSpinnerColumns(maxSpinner, 2);
