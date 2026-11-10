@@ -119,6 +119,8 @@ public class ScriptEditor extends JFrame implements ChangeListener {
         editor.setSyntaxEditingStyle(SyntaxConstants.SYNTAX_STYLE_GROOVY);
         editor.setCodeFoldingEnabled(true);
         editor.addCaretListener(this::processCaretListener);
+        editor.setMarginLineEnabled(true);
+        editor.setMarginLinePosition(120);
 
         try {
             Theme theme = Theme.load(ArtOfIllusion.class.getResourceAsStream("/scriptEditorTheme.xml"));
