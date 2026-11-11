@@ -36,7 +36,7 @@ public class PointPhotonSource implements PhotonSource {
         // Select an average intensity based on the size of the scene.
         Vec3[] corner = map.getBounds().getCorners();
         double maxDist2 = 0.0;
-        for(Vec3 vec3: corner) {
+        for (Vec3 vec3 : corner) {
             double dist2 = pos.distance2(vec3);
             if (dist2 > maxDist2) {
                 maxDist2 = dist2;

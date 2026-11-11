@@ -62,7 +62,7 @@ public class Raytracer {
 
     /**
      * When a ray is traced to determine what objects it intersects, a RayIntersection object
-     * is used for returning the results. Typically it reports only the first object that was
+     * is used for returning the results. Typically, it reports only the first object that was
      * hit, but when two objects are almost exactly the same distance away, it reports both
      * of them to ensure that neither is missed.
      */
@@ -455,21 +455,21 @@ public class Raytracer {
         if (objectList == null) {
             throw new IllegalStateException("cleanup() has already been called");
         }
-        sceneObject = objectList.toArray(new RTObject[objectList.size()]);
+        sceneObject = objectList.toArray(new RTObject[0]);
         for (int i = 0; i < sceneObject.length; i++) {
             sceneObject[i].index = i;
         }
-        light = lightList.toArray(new RTLight[lightList.size()]);
+        light = lightList.toArray(new RTLight[0]);
         objectList = null;
         lightList = null;
         BoundingBox[] objBounds = new BoundingBox[sceneObject.length];
         double minx, maxx, miny, maxy, minz, maxz;
-        int i;
+
 
         // Find the bounding boxes for each object, and for the entire scene.
         minx = miny = minz = Double.MAX_VALUE;
         maxx = maxy = maxz = -Double.MAX_VALUE;
-        for (i = 0; i < sceneObject.length; i++) {
+        for (int i = 0; i < sceneObject.length; i++) {
             objBounds[i] = sceneObject[i].getBounds();
             if (objBounds[i].minx < minx) {
                 minx = objBounds[i].minx;
@@ -505,7 +505,7 @@ public class Raytracer {
         // Find the nodes which contain the camera and the lights.
         cameraNode = rootNode.findNode(camera.getCameraCoordinates().getOrigin());
         lightNode = new OctreeNode[light.length];
-        for (i = 0; i < light.length; i++) {
+        for (int i = 0; i < light.length; i++) {
             if (light[i].getLight() instanceof DirectionalLight) {
                 lightNode[i] = null;
             } else {
@@ -515,7 +515,7 @@ public class Raytracer {
     }
 
     /**
-     * Set fields to null. This may be called when you are done with the Raytracer and will not use it any more.
+     * Set fields to null. This may be called when you are done with the Raytracer and will not use it anymore.
      * This is not required, but may help the garbage collector to work more efficiently.
      */
     public void cleanup() {

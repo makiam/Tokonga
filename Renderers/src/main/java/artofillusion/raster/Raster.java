@@ -1,5 +1,5 @@
 /* Copyright (C) 2001-2014 by Peter Eastman
-   Changes copyright (C) 2017-2023 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -350,8 +350,10 @@ public class Raster implements Renderer, Runnable {
         // Record information about the scene.
         light = theScene.getObjects().stream().filter(info -> info.isVisible() && info.getObject() instanceof Light).toArray(ObjectInfo[]::new);
         positionNeeded = false;
-        for (ObjectInfo li : light) {
-            if(li.getObject() instanceof DirectionalLight) continue;
+        for (var li : light) {
+            if (li.getObject() instanceof DirectionalLight) {
+                continue;
+            }
             positionNeeded = true;
         }
         ambColor = theScene.getAmbientColor();
@@ -368,7 +370,7 @@ public class Raster implements Renderer, Runnable {
         }
 
         // Determine information about the viewpoint.
-        final Vec3 viewdir = theCamera.getViewToWorld().timesDirection(Vec3.vz());
+        final Vec3 viewDir = theCamera.getViewToWorld().timesDirection(Vec3.vz());
         Point p = new Point(width / 2, height / 2);
         final Vec3 orig = theCamera.getCameraCoordinates().getOrigin();
         Vec3 center = theCamera.convertScreenToWorld(p, focalDist);
@@ -388,7 +390,7 @@ public class Raster implements Renderer, Runnable {
                 RasterContext context = threadRasterContext.get();
                 ObjectInfo obj = sortedObjects[index];
                 context.camera.setObjectTransform(obj.getCoords().fromLocal());
-                renderObject(obj, orig, viewdir, obj.getCoords().toLocal(), context, thisThread);
+                renderObject(obj, orig, viewDir, obj.getCoords().toLocal(), context, thisThread);
                 if (thisThread != renderThread) {
                     return;
                 }
@@ -3306,22 +3308,22 @@ public class Raster implements Renderer, Runnable {
         if (cullBackfaces && backface) {
             return;
         }
-        if (dv1.dispnorm == null) {
+        if (dv1.dispNorm == null) {
             dv1.prepareToRender(tri, viewdir, ugrad, vgrad, shading, context);
         }
-        if (dv2.dispnorm == null) {
+        if (dv2.dispNorm == null) {
             dv2.prepareToRender(tri, viewdir, ugrad, vgrad, shading, context);
         }
-        if (dv3.dispnorm == null) {
+        if (dv3.dispNorm == null) {
             dv3.prepareToRender(tri, viewdir, ugrad, vgrad, shading, context);
         }
         Vec3 closestNorm;
         if (dv1.z < dv2.z && dv1.z < dv3.z) {
-            closestNorm = dv1.dispnorm;
+            closestNorm = dv1.dispNorm;
         } else if (dv2.z < dv1.z && dv2.z < dv3.z) {
-            closestNorm = dv2.dispnorm;
+            closestNorm = dv2.dispNorm;
         } else {
-            closestNorm = dv3.dispnorm;
+            closestNorm = dv3.dispNorm;
         }
         if (shading == GOURAUD) {
             renderTriangleGouraud(dv1.pos, dv1.z, dv1.u, dv1.v, dv1.diffuse, dv1.specular,
@@ -3329,14 +3331,14 @@ public class Raster implements Renderer, Runnable {
                     dv3.pos, dv3.z, dv3.u, dv3.v, dv3.diffuse, dv3.specular,
                     tri, clip, viewdir.dot(closestNorm), backface, material, context);
         } else if (shading == HYBRID) {
-            renderTriangleHybrid(dv1.pos, dv1.z, dv1.dispvert, dv1.dispnorm, dv1.u, dv1.v, dv1.diffuse,
-                    dv2.pos, dv2.z, dv2.dispvert, dv2.dispnorm, dv2.u, dv2.v, dv2.diffuse,
-                    dv3.pos, dv3.z, dv3.dispvert, dv3.dispnorm, dv3.u, dv3.v, dv3.diffuse,
+            renderTriangleHybrid(dv1.pos, dv1.z, dv1.dispVert, dv1.dispNorm, dv1.u, dv1.v, dv1.diffuse,
+                    dv2.pos, dv2.z, dv2.dispVert, dv2.dispNorm, dv2.u, dv2.v, dv2.diffuse,
+                    dv3.pos, dv3.z, dv3.dispVert, dv3.dispNorm, dv3.u, dv3.v, dv3.diffuse,
                     tri, viewdir, closestNorm, clip, viewdir.dot(closestNorm), backface, material, context);
         } else {
-            renderTrianglePhong(dv1.pos, dv1.z, dv1.dispvert, dv1.dispnorm, dv1.u, dv1.v,
-                    dv2.pos, dv2.z, dv2.dispvert, dv2.dispnorm, dv2.u, dv2.v,
-                    dv3.pos, dv3.z, dv3.dispvert, dv3.dispnorm, dv3.u, dv3.v,
+            renderTrianglePhong(dv1.pos, dv1.z, dv1.dispVert, dv1.dispNorm, dv1.u, dv1.v,
+                    dv2.pos, dv2.z, dv2.dispVert, dv2.dispNorm, dv2.u, dv2.v,
+                    dv3.pos, dv3.z, dv3.dispVert, dv3.dispNorm, dv3.u, dv3.v,
                     tri, viewdir, closestNorm, clip, bumpMap, backface, material, context);
         }
     }
@@ -3349,15 +3351,15 @@ public class Raster implements Renderer, Runnable {
 
         public final Vec3 vert;
         public final Vec3 norm;
-        public final Vec3 dispvert;
-        public Vec3 dispnorm;
+        public final Vec3 dispVert;
+        public Vec3 dispNorm;
         public final Vec2 pos;
         public final double u;
         public final double v;
         public final double disp;
         public double tol;
         public final float z;
-        public final float basez;
+        public final float baseZ;
         public RGBColor diffuse, specular, highlight;
 
         public DisplacedVertex(RenderingTriangle tri, Vec3 vert, Vec3 norm, double u, double v,
@@ -3366,12 +3368,12 @@ public class Raster implements Renderer, Runnable {
             this.norm = norm;
             this.u = u;
             this.v = v;
-            basez = (float) toView.timesZ(vert);
-            tol = (basez > context.camera.getDistToScreen()) ? smoothScale * basez : smoothScale;
+            baseZ = (float) toView.timesZ(vert);
+            tol = (baseZ > context.camera.getDistToScreen()) ? smoothScale * baseZ : smoothScale;
             disp = tri.getDisplacement(u, v, 1.0 - u - v, tol, 0.0);
-            dispvert = new Vec3(vert.x + disp * norm.x, vert.y + disp * norm.y, vert.z + disp * norm.z);
-            z = (float) toView.timesZ(dispvert);
-            pos = toScreen.timesXY(dispvert);
+            dispVert = new Vec3(vert.x + disp * norm.x, vert.y + disp * norm.y, vert.z + disp * norm.z);
+            z = (float) toView.timesZ(dispVert);
+            pos = toScreen.timesXY(dispVert);
         }
 
         /**
@@ -3384,11 +3386,11 @@ public class Raster implements Renderer, Runnable {
             double w = 1.0 - u - v;
             double dhdu = (tri.getDisplacement(u + (1e-5), v, w - (1e-5), tol, 0.0) - disp) * 1e5;
             double dhdv = (tri.getDisplacement(u, v + (1e-5), w - (1e-5), tol, 0.0) - disp) * 1e5;
-            dispnorm = new Vec3(norm);
+            dispNorm = new Vec3(norm);
             context.tempVec[0].set(dhdu * ugrad.x + dhdv * vgrad.x, dhdu * ugrad.y + dhdv * vgrad.y, dhdu * ugrad.z + dhdv * vgrad.z);
-            dispnorm.scale(context.tempVec[0].dot(dispnorm) + 1.0);
-            dispnorm.subtract(context.tempVec[0]);
-            dispnorm.normalize();
+            dispNorm.scale(context.tempVec[0].dot(dispNorm) + 1.0);
+            dispNorm.subtract(context.tempVec[0]);
+            dispNorm.normalize();
 
             // Find the screen position and lighting.
             tol = (z > context.camera.getDistToScreen()) ? smoothScale * z : smoothScale;
@@ -3398,8 +3400,8 @@ public class Raster implements Renderer, Runnable {
             }
             if (shading != PHONG) {
                 diffuse = new RGBColor();
-                tri.getTextureSpec(context.surfSpec, viewdir.dot(dispnorm), u, v, w, tol, time);
-                calcLight(dispvert, dispnorm, viewdir, dispnorm, context.surfSpec.roughness, diffuse, specular, highlight, context);
+                tri.getTextureSpec(context.surfSpec, viewdir.dot(dispNorm), u, v, w, tol, time);
+                calcLight(dispVert, dispNorm, viewdir, dispNorm, context.surfSpec.roughness, diffuse, specular, highlight, context);
                 if (specular != null) {
                     specular.add(highlight);
                 }

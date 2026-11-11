@@ -71,10 +71,10 @@ public class PhotonMap {
         this.numEstimate = numEstimate;
         rt = raytracer;
         this.renderer = renderer;
-        if (shared != null) {
-            direction = shared.direction;
-        } else {
+        if (shared == null) {
             direction = new Vec3[65536];
+        } else {
+            direction = shared.direction;
         }
         random = new Random(1);
     }
@@ -181,7 +181,7 @@ public class PhotonMap {
         PhotonList nearbyPhotons = new PhotonList(numEstimate);
         RGBColor tempColor = new RGBColor();
         nearbyPhotons.init(0.0f);
-        for(Photon value: photon) {
+        for (var value: photon) {
             tempColor.setERGB(value.ergb);
             float intensity = -(tempColor.getRed() + tempColor.getGreen() + tempColor.getBlue());
             if (intensity <= nearbyPhotons.cutoff2) {
@@ -812,8 +812,12 @@ public class PhotonMap {
             // Split the photons based on whether they are greater than or less than the median estimate.
             int i = start, j = end;
             while (true) {
-                for (; i < end && axisPosition(i, axis) < medianEstimate; i++);
-                for (; axisPosition(j, axis) > medianEstimate; j--);
+                for (; i < end && axisPosition(i, axis) < medianEstimate; i++) {
+                    ;
+                }
+                for (; axisPosition(j, axis) > medianEstimate; j--) {
+                    ;
+                }
                 if (i >= j) {
                     break;
                 }

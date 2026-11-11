@@ -40,7 +40,7 @@ public class SpotlightPhotonSource implements PhotonSource {
 
         Vec3 pos = coords.getOrigin();
         double maxDist2 = 0.0;
-        for(Vec3 vec3: map.getBounds().getCorners()) {
+        for (Vec3 vec3 : map.getBounds().getCorners()) {
             double dist2 = pos.distance2(vec3);
             if (dist2 > maxDist2) {
                 maxDist2 = dist2;

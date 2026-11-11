@@ -1,5 +1,6 @@
 /* Copyright (C) 1999-2013 by Peter Eastman
    Editions copyright (C) by Petri Ihalainen 2020
+   Changes copyright (C) 2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -17,7 +18,7 @@ import artofillusion.object.*;
 import artofillusion.texture.*;
 
 /**
- * RTCylinder represents an cylinder, tapered cylinder, or cone to be raytraced. It is
+ * RTCylinder represents a cylinder, tapered cylinder, or cone to be raytraced. It is
  * defined by specifying a Cylinder object, and the transformations to and from local
  * coordinates.
  */
@@ -29,7 +30,7 @@ public class RTCylinder extends RTObject {
     double rx;
     double rz;
     final double height;
-    final double halfh;
+    final double halfH;
     final double rx2;
     final double rz2;
     final double toprx2;
@@ -95,7 +96,7 @@ public class RTCylinder extends RTObject {
             }
         }
         height = size.y;
-        halfh = height / 2.0;
+        halfH = height / 2.0;
         if (transform) {
             rx = size.x / 2.0;
             rz = size.z / 2.0;
@@ -154,11 +155,11 @@ public class RTCylinder extends RTObject {
         if (transform) {
             v1.set(cx - orig.x, cy - orig.y, cz - orig.z);
             toLocal.transformDirection(v1);
-            v1.y -= halfh;
+            v1.y -= halfH;
             dir.set(rdir);
             toLocal.transformDirection(dir);
         } else {
-            v1.set(cx - orig.x, cy - orig.y - halfh, cz - orig.z);
+            v1.set(cx - orig.x, cy - orig.y - halfH, cz - orig.z);
             if (uniform) {
                 dir = rdir;
             } else {
@@ -227,10 +228,8 @@ public class RTCylinder extends RTObject {
         }
         dist1 = Double.MAX_VALUE;
         dist2 = mint;
-        if (c > radialTol) // Ray origin is outside cylinder.
-        {
-            if (b > 0.0) // Ray points toward cylinder.
-            {
+        if (c > radialTol) { // Ray origin is outside cylinder.
+            if (b > 0.0) { // Ray points toward cylinder.
                 a = dir.x * dir.x + temp1 * dir.z - temp2 * temp2;
                 e = b * b - a * c;
                 if (e >= 0.0) {
@@ -241,17 +240,14 @@ public class RTCylinder extends RTObject {
                     }
                 }
             }
-        } else if (c < -radialTol) // Ray origin is inside cylinder.
-        {
+        } else if (c < -radialTol) { // Ray origin is inside cylinder.
             a = dir.x * dir.x + temp1 * dir.z - temp2 * temp2;
             e = b * b - a * c;
             if (e >= 0.0) {
                 dist1 = (b + Math.sqrt(e)) / a;
             }
-        } else // Ray origin is on the surface of the cylinder.
-        {
-            if (b > 0.0) // Ray points into cylinder.
-            {
+        } else { // Ray origin is on the surface of the cylinder.
+            if (b > 0.0) { // Ray points into cylinder.
                 a = dir.x * dir.x + temp1 * dir.z - temp2 * temp2;
                 e = b * b - a * c;
                 if (e >= 0.0) {
@@ -295,13 +291,13 @@ public class RTCylinder extends RTObject {
     private void projectPoint(Vec3 pos) {
         if (transform) {
             toLocal.transform(pos);
-            double r = rx + sy * (pos.y + halfh);
+            double r = rx + sy * (pos.y + halfH);
             double scale = r / Math.sqrt(pos.x * pos.x + sz * pos.z * pos.z);
             pos.set(pos.x * scale, pos.y, pos.z * scale);
             fromLocal.transform(pos);
         } else {
             double dx = pos.x - cx, dz = pos.z - cz;
-            double r = rx + sy * (pos.y - cy + halfh);
+            double r = rx + sy * (pos.y - cy + halfH);
             double scale = r / Math.sqrt(dx * dx + sz * dz * dz);
             pos.set(cx + dx * scale, pos.y, cz + dz * scale);
         }
@@ -313,12 +309,13 @@ public class RTCylinder extends RTObject {
     @Override
     public BoundingBox getBounds() {
         if (transform) {
-            return (new BoundingBox(-rx, rx, -halfh, halfh, -rz, rz)).transformAndOutset(fromLocal);
+            return (new BoundingBox(-rx, rx, -halfH, halfH, -rz, rz)).transformAndOutset(fromLocal);
         } else if (toprx2 > rx2) {
-            double xrad = Math.sqrt(toprx2), zrad = Math.sqrt(rz2 * toprx2 / rx2);
-            return new BoundingBox(cx - xrad, cx + xrad, cy - halfh, cy + halfh, cz - zrad, cz + zrad);
+            double xRad = Math.sqrt(toprx2);
+            double zRad = Math.sqrt(rz2 * toprx2 / rx2);
+            return new BoundingBox(cx - xRad, cx + xRad, cy - halfH, cy + halfH, cz - zRad, cz + zRad);
         } else {
-            return new BoundingBox(cx - rx, cx + rx, cy - halfh, cy + halfh, cz - rz, cz + rz);
+            return new BoundingBox(cx - rx, cx + rx, cy - halfH, cy + halfH, cz - rz, cz + rz);
         }
     }
 
@@ -332,7 +329,7 @@ public class RTCylinder extends RTObject {
         BoundingBox bb = node.getBounds();
         if (transform) {
             bb = bb.transformAndOutset(toLocal);
-            if (bb.miny > halfh || bb.maxy < -halfh) {
+            if (bb.miny > halfH || bb.maxy < -halfH) {
                 return false;
             }
             x = 0.0;
@@ -352,7 +349,7 @@ public class RTCylinder extends RTObject {
             }
             return true;
         }
-        if (bb.miny > cy + halfh || bb.maxy < cy - halfh) {
+        if (bb.miny > cy + halfH || bb.maxy < cy - halfH) {
             return false;
         }
         x = cx;
@@ -367,8 +364,8 @@ public class RTCylinder extends RTObject {
         } else if (cz > bb.maxz) {
             z = bb.maxz;
         }
-        double maxrad2 = (rx2 > toprx2 ? rx2 : toprx2);
-        if ((x - cx) * (x - cx) + sz * (z - cz) * (z - cz) > maxrad2) {
+        double maxRad2 = Math.max(rx2, toprx2);
+        if ((x - cx) * (x - cx) + sz * (z - cz) * (z - cz) > maxRad2) {
             return false;
         }
         return true;
@@ -402,7 +399,7 @@ public class RTCylinder extends RTObject {
         private final Vec3 trueNorm;
         private final Vec3 pos;
 
-        public CylinderIntersection(RTCylinder cylinder, int numIntersections, int hit, Vec3 point1, Vec3 point2, double dist1, double dist2) {
+        CylinderIntersection(RTCylinder cylinder, int numIntersections, int hit, Vec3 point1, Vec3 point2, double dist1, double dist2) {
             this.cylinder = cylinder;
             this.numIntersections = numIntersections;
             this.hit = hit;
@@ -506,10 +503,10 @@ public class RTCylinder extends RTObject {
                 if (cylinder.transform) {
                     trueNorm.set(r1x - cylinder.cx, r1y - cylinder.cy, r1z - cylinder.cz);
                     cylinder.toLocal.transformDirection(trueNorm);
-                    trueNorm.set(trueNorm.x, -(cylinder.rx + cylinder.sy * (trueNorm.y + cylinder.halfh)) * cylinder.sy, trueNorm.z * cylinder.sz);
+                    trueNorm.set(trueNorm.x, -(cylinder.rx + cylinder.sy * (trueNorm.y + cylinder.halfH)) * cylinder.sy, trueNorm.z * cylinder.sz);
                     cylinder.fromLocal.transformDirection(trueNorm);
                 } else {
-                    trueNorm.set(r1x - cylinder.cx, -(cylinder.rx + cylinder.sy * (r1y - cylinder.cy + cylinder.halfh)) * cylinder.sy, (r1z - cylinder.cz) * cylinder.sz);
+                    trueNorm.set(r1x - cylinder.cx, -(cylinder.rx + cylinder.sy * (r1y - cylinder.cy + cylinder.halfH)) * cylinder.sy, (r1z - cylinder.cz) * cylinder.sz);
                 }
                 trueNorm.normalize();
             }

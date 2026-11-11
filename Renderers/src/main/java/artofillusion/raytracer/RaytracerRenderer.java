@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2014 by Peter Eastman
    Modifications copyright © 2020-2024 by Petri Ihalainen
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -1247,7 +1247,7 @@ public class RaytracerRenderer implements Renderer, Runnable {
             // extra antialiasing pixels around the edges. The value is
             // the rendering time height in pixels.
 
-            imgHeight = height*2;
+            imgHeight = height * 2;
         }
         double dof1 = 0.0, dof2 = 0.0;
         if (depth) {
