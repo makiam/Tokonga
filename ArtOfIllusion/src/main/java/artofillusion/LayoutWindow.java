@@ -52,7 +52,11 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
 
     final SceneViewer[] theView;
     final BorderContainer[] viewPanel;
-    final FormContainer viewsContainer;
+    /** The container of the four views: a QuadViewPane if the resizable quad view is enabled, otherwise a fixed grid. */
+    final Widget viewsContainer;
+
+    /** True if the four views are separated by movable dividers, as set in user preferences. */
+    private final boolean resizableViews;
 
     private final DockingContainer[] docks;
 
@@ -220,12 +224,17 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         theView[3].setOrientation(6);
 
         theView[currentView].setDrawFocus(true);
-        viewsContainer = new FormContainer(new double[]{1, 1}, new double[]{1, 1});
-        viewsContainer.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
-        viewsContainer.add(viewPanel[0], 0, 0);
-        viewsContainer.add(viewPanel[1], 1, 0);
-        viewsContainer.add(viewPanel[2], 0, 1);
-        viewsContainer.add(viewPanel[3], 1, 1);
+        resizableViews = ArtOfIllusion.getPreferences().getUseResizableQuadView();
+        if (resizableViews) {
+            viewsContainer = new QuadViewPane(viewPanel[0], viewPanel[1], viewPanel[2], viewPanel[3]);
+        } else {
+            FormContainer grid = new FormContainer(new double[]{1, 1}, new double[]{1, 1});
+            grid.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
+            for (int i = 0; i < viewPanel.length; i++) {
+                grid.add(viewPanel[i], i % 2, i / 2);
+            }
+            viewsContainer = grid;
+        }
         FormContainer centerContainer = new FormContainer(new double[]{0.0, 1.0}, new double[]{0.0, 1.0, 0.0, 0.0});
         centerContainer.setDefaultLayout(new LayoutInfo(LayoutInfo.CENTER, LayoutInfo.BOTH, null, null));
         centerContainer.add(viewsContainer, 1, 0, 1, 3);
@@ -360,6 +369,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
             theView[i].setShowAxes(lastShowAxes);
             theView[i].setRenderMode((int) lastRenderMode[i]);
         }
+        if (resizableViews) {
+            ((QuadViewPane) viewsContainer).setDividerState(preferences.get("quadViewSplits", null));
+        }
     }
 
     /**
@@ -369,6 +381,9 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         preferences.putBoolean("showAxes", theView[currentView].getShowAxes());
         preferences.putInt("numViews", numViewsShown);
         preferences.putByteArray("displayMode", new byte[]{(byte) theView[0].getRenderMode(), (byte) theView[1].getRenderMode(), (byte) theView[2].getRenderMode(), (byte) theView[3].getRenderMode()});
+        if (resizableViews) {
+            preferences.put("quadViewSplits", ((QuadViewPane) viewsContainer).getDividerState());
+        }
     }
 
     private void handleKeyEvent(KeyPressedEvent e) {
@@ -2436,22 +2451,36 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
     }
 
     public void toggleViewsCommand() {
-        if (numViewsShown == 4) {
-            numViewsShown = 1;
-            viewsContainer.setColumnWeight(0, (currentView == 0 || currentView == 2) ? 1 : 0);
-            viewsContainer.setColumnWeight(1, (currentView == 1 || currentView == 3) ? 1 : 0);
-            viewsContainer.setRowWeight(0, (currentView == 0 || currentView == 1) ? 1 : 0);
-            viewsContainer.setRowWeight(1, (currentView == 2 || currentView == 3) ? 1 : 0);
-            viewMenuItem[0].setText(Translate.text("menu.fourViews"));
+        if (resizableViews) {
+            QuadViewPane quad = (QuadViewPane) viewsContainer;
+            if (numViewsShown == 4) {
+                numViewsShown = 1;
+                quad.showSingleView(currentView);
+                viewMenuItem[0].setText(Translate.text("menu.fourViews"));
+            } else {
+                numViewsShown = 4;
+                quad.showQuadView();
+                viewMenuItem[0].setText(Translate.text("menu.oneView"));
+            }
         } else {
-            numViewsShown = 4;
-            viewsContainer.setColumnWeight(0, 1);
-            viewsContainer.setColumnWeight(1, 1);
-            viewsContainer.setRowWeight(0, 1);
-            viewsContainer.setRowWeight(1, 1);
-            viewMenuItem[0].setText(Translate.text("menu.oneView"));
+            FormContainer grid = (FormContainer) viewsContainer;
+            if (numViewsShown == 4) {
+                numViewsShown = 1;
+                grid.setColumnWeight(0, (currentView == 0 || currentView == 2) ? 1 : 0);
+                grid.setColumnWeight(1, (currentView == 1 || currentView == 3) ? 1 : 0);
+                grid.setRowWeight(0, (currentView == 0 || currentView == 1) ? 1 : 0);
+                grid.setRowWeight(1, (currentView == 2 || currentView == 3) ? 1 : 0);
+                viewMenuItem[0].setText(Translate.text("menu.fourViews"));
+            } else {
+                numViewsShown = 4;
+                grid.setColumnWeight(0, 1);
+                grid.setColumnWeight(1, 1);
+                grid.setRowWeight(0, 1);
+                grid.setRowWeight(1, 1);
+                viewMenuItem[0].setText(Translate.text("menu.oneView"));
+            }
+            grid.layoutChildren();
         }
-        viewsContainer.layoutChildren();
         savePreferences();
         updateImage();
         viewPanel[currentView].requestFocus();

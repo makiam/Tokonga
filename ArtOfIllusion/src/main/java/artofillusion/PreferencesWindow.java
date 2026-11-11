@@ -42,7 +42,7 @@ public class PreferencesWindow {
     private ValueField animationFrameRateField;
     private BCheckBox drawActiveFrustumBox, drawCameraFrustumBox, showTravelCuesOnIdleBox, showTravelCuesScrollingBox;
     private BCheckBox showTiltDialBox;
-    private BCheckBox glBox, backupBox, reverseZoomBox, useViewAnimationsBox;
+    private BCheckBox glBox, backupBox, reverseZoomBox, useViewAnimationsBox, resizableQuadViewBox;
 
     private static int lastTab;
     private boolean cameraFrustumState, travelCuesState;
@@ -101,6 +101,7 @@ public class PreferencesWindow {
         preferences.setShowTiltDial(showTiltDialBox.getState());
 
         preferences.setUseCompoundMeshTool(toolChoice.getSelectedIndex() == 1);
+        preferences.setUseResizableQuadView(resizableQuadViewBox.getState());
 
         preferences.savePreferences();
 
@@ -150,6 +151,7 @@ public class PreferencesWindow {
         reverseZoomBox = new BCheckBox(Translate.text("reverseScrollWheelZooming"), prefs.getReverseZooming());
 
         useViewAnimationsBox = new BCheckBox(Translate.text("useViewAnimations"), prefs.getUseViewAnimations());
+        resizableQuadViewBox = new BCheckBox(Translate.text("resizableQuadView"), prefs.getUseResizableQuadView());
         animationDurationField = new ValueField(prefs.getMaxAnimationDuration(), ValueField.POSITIVE);
         animationFrameRateField = new ValueField(prefs.getAnimationFrameRate(), ValueField.POSITIVE);
         drawActiveFrustumBox = new BCheckBox(Translate.text("anyActiveView"), prefs.getDrawActiveFrustum());
@@ -227,7 +229,7 @@ public class PreferencesWindow {
 
 
         // Layout the panel.
-        FormContainer panel = new FormContainer(3, 20);
+        FormContainer panel = new FormContainer(3, 21);
         LayoutInfo labelLayout = new LayoutInfo(LayoutInfo.EAST, LayoutInfo.NONE, new Insets(2, 5, 2, 5), null);
         LayoutInfo widgetLayout = new LayoutInfo(LayoutInfo.WEST, LayoutInfo.BOTH, new Insets(2, 0, 2, 0), null);
 
@@ -270,6 +272,7 @@ public class PreferencesWindow {
         panel.add(showTravelCuesOnIdleBox, 1, 17, 2, 1, widgetLayout);
         panel.add(showTravelCuesScrollingBox, 1, 18, 2, 1, widgetLayout);
         panel.add(showTiltDialBox, 1, 19, 2, 1, widgetLayout);
+        panel.add(resizableQuadViewBox, 1, 20, 2, 1, widgetLayout);
 
         return panel;
     }
