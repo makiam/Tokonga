@@ -22,11 +22,13 @@ import artofillusion.texture.*;
 import artofillusion.tools.PrimitivesMenu;
 import artofillusion.ui.*;
 import artofillusion.view.ViewAnimation;
+
 import buoy.event.*;
 import buoy.widget.*;
 import buoyx.docking.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.VisibleForTesting;
 
@@ -572,6 +574,10 @@ public class LayoutWindow extends BFrame implements EditingWindow, PopupMenuMana
         toolsMenu.add(editScriptMenu);
         toolsMenu.add(scriptMenu = Translate.menu("scripts"));
         rebuildScriptsMenu();
+        BMenuItem nse;
+        toolsMenu.add(nse = new BMenuItem("New Script Editor"));
+        nse.getComponent().addActionListener(e -> SwingUtilities.invokeLater(() -> new ScriptEditor(this).setVisible(true)));
+
     }
 
     public void editScriptCommand(CommandEvent ev) {
