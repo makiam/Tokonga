@@ -46,6 +46,7 @@ public class ApplicationPreferences {
     private boolean useCompoundMeshTool;
     private boolean reverseZooming;
     private boolean useViewAnimations = true;
+    private boolean useResizableQuadView = true;
     private boolean drawActiveFrustum;
     private boolean drawCameraFrustum = true;
     private boolean showTravelCuesOnIdle;
@@ -142,6 +143,7 @@ public class ApplicationPreferences {
         reverseZooming = parseBooleanProperty("reverseZooming", reverseZooming);
 
         useViewAnimations = parseBooleanProperty("useViewAnimations", useViewAnimations);
+        useResizableQuadView = parseBooleanProperty("useResizableQuadView", useResizableQuadView);
         maxAnimationDuration = parseDoubleProperty("maxAnimationDuration", maxAnimationDuration);
         animationFrameRate = parseDoubleProperty("animationFrameRate", animationFrameRate);
         drawActiveFrustum = parseBooleanProperty("drawActiveFrustum", drawActiveFrustum);
@@ -430,6 +432,21 @@ public class ApplicationPreferences {
     public final void setReverseZooming(boolean reverse) {
         reverseZooming = reverse;
         properties.put("reverseZooming", Boolean.toString(reverse));
+    }
+
+    /**
+     * Get whether to use movable dividers in the scene window quad view.
+     */
+    public final boolean getUseResizableQuadView() {
+        return useResizableQuadView;
+    }
+
+    /**
+     * Set whether to use movable dividers in the scene window quad view.
+     */
+    public final void setUseResizableQuadView(boolean use) {
+        useResizableQuadView = use;
+        properties.put("useResizableQuadView", Boolean.toString(use));
     }
 
     /**
