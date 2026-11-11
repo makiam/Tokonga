@@ -1,6 +1,6 @@
 /* Copyright (C) 1999-2007 by Peter Eastman
    Changes copyright (C) 2024 by Petri Ihalainen
-   Changes copyright (C) 2023-2025 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -121,7 +121,7 @@ public class ValueField extends BTextField {
             if ((constraints & INTEGER) != 0) {
                 val = (double) Integer.parseInt(text);
             } else {
-                val = new Double(text);
+                val = Double.parseDouble(text);
             }
         } catch (NumberFormatException ex) {
             return false;
@@ -233,7 +233,7 @@ public class ValueField extends BTextField {
 
     /**
      * Change a decimal comma into a decimal point.
-     * This shoud be called, when editing is done.
+     * This should be called, when editing is done.
      **/
     private void commaToPoint() {
         if (isTextValid()) // The text is valid as such, nothing to do.
@@ -261,5 +261,22 @@ public class ValueField extends BTextField {
      */
     public void sendValidEventsOnly(boolean validOnly) {
         validEventsOnly = validOnly;
+    }
+
+    /**
+     * Sets the textField attribute of the ValueField object
+     *
+     * @param tf The new textField value
+     */
+    public void setTextField(BTextField tf) {
+        String text = getText();
+        int c = getColumns();
+        component = tf.getComponent();
+
+        component.setText(text);
+        component.setColumns(c);
+        component.addCaretListener(caretListener);
+        component.getDocument().addDocumentListener(documentListener);
+
     }
 }
