@@ -1,6 +1,6 @@
 [versions]
 buoy = "1.1.5"
-jogl = "2.6.0"
+jogl = "2.7.0-rc-20261020"
 junit = "6.1.3"
 
 [libraries]
