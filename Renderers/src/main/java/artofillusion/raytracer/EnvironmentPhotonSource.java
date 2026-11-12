@@ -36,7 +36,7 @@ public class EnvironmentPhotonSource implements PhotonSource {
         center = map.getBounds().getCenter();
         Vec3[] corner = map.getBounds().getCorners();
         double maxDist2 = 0.0;
-        for(var vec3: corner) {
+        for (var vec3 : corner) {
             double dist2 = center.distance2(vec3);
             if (dist2 > maxDist2) {
                 maxDist2 = dist2;

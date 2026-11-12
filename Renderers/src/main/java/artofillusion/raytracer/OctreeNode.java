@@ -131,16 +131,16 @@ public class OctreeNode {
      * Build a list of all child nodes.
      */
     public OctreeNode[] findChildNodes() {
-        ArrayList<OctreeNode> nodes = new ArrayList<>();
+        List<OctreeNode> nodes = new ArrayList<>();
         if (child != null) {
-            for(OctreeNode octreeNode: child) {
+            for (OctreeNode octreeNode : child) {
                 if (octreeNode == null) {
                     continue;
                 }
                 nodes.add(octreeNode);
             }
         }
-        return nodes.toArray(new OctreeNode[nodes.size()]);
+        return nodes.toArray(new OctreeNode[0]);
     }
 
     /**
@@ -405,7 +405,7 @@ public class OctreeNode {
         float xsize = maxx - minx;
         float ysize = maxy - miny;
         float zsize = maxz - minz;
-        double cutoff = (xsize > ysize ? xsize : ysize);
+        double cutoff = Math.max(xsize, ysize);
         if (zsize > cutoff) {
             cutoff = zsize;
         }
@@ -436,17 +436,17 @@ public class OctreeNode {
         }
         float min = findMinimum(this, axis);
         float max = findMaximum(this, axis);
-        float invwidth = CELLS / (max - min);
-        for(BoundingBox objBound: objBounds) {
-            float objmin = findMinimum(objBound, axis);
-            float objmax = findMaximum(objBound, axis);
-            if (objmin <= min) {
+        float invWidth = CELLS / (max - min);
+        for (BoundingBox objBound : objBounds) {
+            float objMin = findMinimum(objBound, axis);
+            float objMax = findMaximum(objBound, axis);
+            if (objMin <= min) {
                 leftCount[0]++;
             } else {
-                leftCount[(int) ((objmin - min) * invwidth) + 1]++;
+                leftCount[(int) ((objMin - min) * invWidth) + 1]++;
             }
-            if (objmax < max) {
-                rightCount[(int) ((objmax - min) * invwidth) + 1]++;
+            if (objMax < max) {
+                rightCount[(int) ((objMax - min) * invWidth) + 1]++;
             }
         }
         int numToLeft = 0;
@@ -468,10 +468,10 @@ public class OctreeNode {
 
         // We now have a reasonable position for the splitting plane, but we may be able to improve it
         // by making it flush with an object.
-        float mid = min + j / invwidth;
-        float limit = mid + 1.0f / invwidth;
+        float mid = min + j / invWidth;
+        float limit = mid + 1.0f / invWidth;
         boolean found = false;
-        for(BoundingBox objBound: objBounds) {
+        for (BoundingBox objBound : objBounds) {
             float objmin = findMinimum(objBound, axis);
             if (objmin > mid && objmin < limit) {
                 limit = objmin;
@@ -481,9 +481,9 @@ public class OctreeNode {
         if (found) {
             return (float) (limit - Raytracer.TOL);
         }
-        limit = mid - 1.0f / invwidth;
+        limit = mid - 1.0f / invWidth;
         found = false;
-        for(BoundingBox objBound: objBounds) {
+        for (BoundingBox objBound : objBounds) {
             float objmax = findMaximum(objBound, axis);
             if (objmax < mid && objmax > limit) {
                 limit = objmax;
