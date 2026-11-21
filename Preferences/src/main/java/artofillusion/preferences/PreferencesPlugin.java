@@ -127,7 +127,7 @@ public class PreferencesPlugin implements Plugin {
                 log.atError().log("PreferencesPlugin: could not create dir: {}", prefdir.getAbsolutePath());
             }
         }
-        File preffile = null;
+        File preffile;
         if (prefdir.exists()) {
             preffile = new File(prefdir, owner + ".properties");
             result.open(preffile, semaphore);
@@ -160,7 +160,7 @@ public class PreferencesPlugin implements Plugin {
     }
 
     public static void commit() throws IOException {
-        if (prefs == null || prefs.isEmpty()) {
+        if (prefs.isEmpty()) {
             return;
         }
         final List<String> errors = new ArrayList<>();
@@ -182,7 +182,7 @@ public class PreferencesPlugin implements Plugin {
     @PluginRegistry.UsedViaReflection
     @SuppressWarnings("unused")
     public static void commit(String owner) throws IOException {
-        if (prefs == null || prefs.isEmpty()) {
+        if (prefs.isEmpty()) {
             log.info("No preferences set");
             return;
         }
