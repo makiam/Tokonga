@@ -1,5 +1,5 @@
 /* Copyright (C) 2006-2013 by Peter Eastman
-   Changes copyright (C) 2023 by Maksim Khramov
+   Changes copyright (C) 2023-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -114,7 +114,7 @@ public abstract class ImplicitObject extends Object3D {
     /**
      * Subclasses should invoke this method in their own constructors for loading from a file.
      */
-    public ImplicitObject(DataInputStream in, Scene theScene) throws IOException, InvalidObjectException {
+    public ImplicitObject(DataInputStream in, Scene theScene) throws IOException {
         super(in, theScene);
     }
 
@@ -133,10 +133,10 @@ public abstract class ImplicitObject extends Object3D {
 
     @Override
     public TriangleMesh convertToTriangleMesh(double tol) {
-        ArrayList<Vec3> vertices = new ArrayList<>();
-        ArrayList<int[]> faces = new ArrayList<>();
+        List<Vec3> vertices = new ArrayList<>();
+        List<int[]> faces = new ArrayList<>();
         generateMesh(tol, vertices, faces);
-        Vec3[] vert = vertices.toArray(new Vec3[vertices.size()]);
+        Vec3[] vert = vertices.toArray(new Vec3[0]);
         int[][] face = faces.toArray(new int[faces.size()][]);
         return new TriangleMesh(vert, face);
     }
@@ -160,7 +160,7 @@ public abstract class ImplicitObject extends Object3D {
         List<int[]> faces = new ArrayList<>();
         generateMesh(tol, vertices, faces);
         RenderingTriangle[] tri = new RenderingTriangle[faces.size()];
-        Vec3[] vert = vertices.toArray(new Vec3[vertices.size()]);
+        Vec3[] vert = vertices.toArray(new Vec3[0]);
         for (int i = 0; i < tri.length; i++) {
             int[] face = faces.get(i);
             tri[i] = texMapping.mapTriangle(face[0], face[1], face[2], face[0], face[1], face[2], vert);
@@ -572,7 +572,7 @@ public abstract class ImplicitObject extends Object3D {
                             int vert1 = ysize * zsize * (i + vertexOffset[corner1][0]) + zsize * (j + vertexOffset[corner1][1]) + (k + vertexOffset[corner1][2]);
                             int corner2 = edgeConnection[edge][1];
                             int vert2 = ysize * zsize * (i + vertexOffset[corner2][0]) + zsize * (j + vertexOffset[corner2][1]) + (k + vertexOffset[corner2][2]);
-                            Integer firstVert = (vert1 < vert2 ? vert1 : vert2);
+                            Integer firstVert = Math.min(vert1, vert2);
 
                             // See if we already created a vertex for this edge.
                             if (edgeDirection[edge][0] != 0.0) {
@@ -629,24 +629,9 @@ public abstract class ImplicitObject extends Object3D {
 
             // Clean up the edge vertex maps, deleting records for vertices that we don't need any more.
             int firstNeeded = ysize * zsize * (i + 1);
-            Iterator<Map.Entry<Integer, Integer>> xiter = xEdgeVertMap.entrySet().iterator();
-            while (xiter.hasNext()) {
-                if (xiter.next().getKey() < firstNeeded) {
-                    xiter.remove();
-                }
-            }
-            Iterator<Map.Entry<Integer, Integer>> yiter = yEdgeVertMap.entrySet().iterator();
-            while (yiter.hasNext()) {
-                if (yiter.next().getKey() < firstNeeded) {
-                    yiter.remove();
-                }
-            }
-            Iterator<Map.Entry<Integer, Integer>> ziter = zEdgeVertMap.entrySet().iterator();
-            while (ziter.hasNext()) {
-                if (ziter.next().getKey() < firstNeeded) {
-                    ziter.remove();
-                }
-            }
+            xEdgeVertMap.entrySet().removeIf(integerIntegerEntry -> integerIntegerEntry.getKey() < firstNeeded);
+            yEdgeVertMap.entrySet().removeIf(integerIntegerEntry -> integerIntegerEntry.getKey() < firstNeeded);
+            zEdgeVertMap.entrySet().removeIf(integerIntegerEntry -> integerIntegerEntry.getKey() < firstNeeded);
 
             // Swap the value arrays so the values for x==i+1 will be in values[0].
             double[] temp = values[0];
