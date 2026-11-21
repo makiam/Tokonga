@@ -20,7 +20,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
+
 import java.util.List;
 import java.util.*;
 
@@ -59,7 +59,7 @@ public class PreferencesPlugin implements Plugin {
         @Override
         @SuppressWarnings("ResultOfObjectAllocationIgnored")
         public void actionPerformed(ActionEvent event) {
-            final LayoutWindow owner = (LayoutWindow)((JMenuItem)event.getSource()).getClientProperty("view");
+            final LayoutWindow owner = (LayoutWindow) ((JMenuItem) event.getSource()).getClientProperty("view");
             new PreferencesWindow(owner);
         }
 
@@ -92,12 +92,13 @@ public class PreferencesPlugin implements Plugin {
         PluginRegistry.PluginResource resource = PluginRegistry.getResource("Preferences", owner);
 
         Properties init = null;
-        if (resource != null)
-            try(InputStream is = resource.getInputStream()) {
+        if (resource != null) {
+            try (var is = resource.getInputStream()) {
                 init = new Properties();
                 init.load(is);
             } catch (Exception e) {
             }
+        }
         result = getPreferences(owner, init);
         return result;
     }
@@ -146,14 +147,14 @@ public class PreferencesPlugin implements Plugin {
         PluginRegistry.PluginResource rsrc = PluginRegistry.getResource("Preferences", owner);
         if (rsrc != null) {
 
-            try (InputStream is = rsrc.getInputStream()) {
+            try (var is = rsrc.getInputStream()) {
 
                 Properties props = new Properties();
                 props.load(is);
-                map.putAll((Map)props);
+                map.putAll((Map) props);
                 log.info("PreferencesPlugin.reloadDefaults: reloaded defaults for: {}", owner);
             } catch (IOException e) {
-                log.atError().setCause(e).log("PreferencesPlugin.reloadDefaults: Error reloading preferences defaults: {}: {}",owner, e.getMessage());
+                log.atError().setCause(e).log("PreferencesPlugin.reloadDefaults: Error reloading preferences defaults: {}: {}", owner, e.getMessage());
             }
         }
     }
@@ -174,7 +175,7 @@ public class PreferencesPlugin implements Plugin {
         if (errors.isEmpty()) {
             return;
         }
-        throw new IOException("PreferencesPlugin error comitting: " + String.join("\n", errors));
+        throw new IOException("PreferencesPlugin error committing: " + String.join("\n", errors));
 
     }
 
