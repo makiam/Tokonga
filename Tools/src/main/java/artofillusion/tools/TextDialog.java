@@ -1,5 +1,5 @@
 /* Copyright (C) 2013 by Peter Eastman
-   Changes copyright (C) 2022-2025 by Maksim Khramov
+   Changes copyright (C) 2022-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -153,7 +153,9 @@ public class TextDialog extends ToolDialog {
 
     @Override
     public void commit() {
-        if (objects.isEmpty()) return;
+        if (objects.isEmpty()) {
+            return;
+        }
 
         UndoRecord undo = new UndoRecord(window);
         if (objects.get(0).getObject() instanceof TriangleMesh) {

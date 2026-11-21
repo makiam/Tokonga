@@ -7,8 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -45,10 +44,10 @@ public final class DataMap extends HashMap<String, Object> {
         }
         Exception err = null;
 
-        try(InputStream is = new FileInputStream(file)) {
+        try (var is = new FileInputStream(file)) {
             Properties props = new Properties();
             props.load(is);
-            super.putAll((Map)props);
+            super.putAll((Map) props);
         } catch (Exception e) {
             err = e;
         }
@@ -68,8 +67,8 @@ public final class DataMap extends HashMap<String, Object> {
         }
         Exception err = null;
         synchronized (this) {
-            
-            try(OutputStream os = new FileOutputStream(this.file)) {
+
+            try (var os = new FileOutputStream(this.file)) {
                 Properties props = new Properties();
                 props.putAll(this);
                 props.store(os, "Changes committed by DataMap");
@@ -92,7 +91,7 @@ public final class DataMap extends HashMap<String, Object> {
     }
 
     @Override
-    public void putAll(Map<? extends String, ? extends Object> data) {
+    public void putAll(Map<? extends String, ?> data) {
         super.putAll(data);
         setModifiedAndNotify();
     }
@@ -101,16 +100,21 @@ public final class DataMap extends HashMap<String, Object> {
         super.put(name, value);
         setModifiedAndNotify();
     }
-    
-    private void setModifiedAndNotify() {
-        if(modified) return;
-        modified = true;
-        if(semaphore == null) return;
 
-        synchronized (semaphore) { semaphore.notifyAll(); }
-        
+    private void setModifiedAndNotify() {
+        if (modified) {
+            return;
+        }
+        modified = true;
+        if (semaphore == null) {
+            return;
+        }
+
+        synchronized (semaphore) {
+            semaphore.notifyAll();
+        }
     }
-    
+
     public String getString(String name) {
         return (String) get(name);
     }
@@ -282,12 +286,13 @@ public final class DataMap extends HashMap<String, Object> {
         if (val == null || val.isEmpty()) {
             return Color.BLACK;
         }
-        if (val.indexOf(',') < 0)
+        if (val.indexOf(',') < 0) {
             try {
                 return Color.decode(val);
             } catch (NumberFormatException e) {
                 return Color.BLACK;
             }
+        }
         float[] comps = (float[]) getArray(name, EMPTY_FLOAT_ARRAY);
         if (comps.length < 3) {
             log.error("Too few color components: {}", comps.length);
@@ -332,7 +337,7 @@ public final class DataMap extends HashMap<String, Object> {
                 sign = (c == '-') ? -1 : 1;
             } else if (frac == 0L && c == '.') {
                 frac = 1L;
-            } else if (mantissa == true && (c == 'e' || c == 'E')) {
+            } else if (mantissa && (c == 'e' || c == 'E')) {
                 mantissa = false;
             } else if (Character.isDigit(c)) {
                 if (mantissa) {

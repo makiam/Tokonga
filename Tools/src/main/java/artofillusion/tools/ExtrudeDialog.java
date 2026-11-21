@@ -65,7 +65,7 @@ public class ExtrudeDialog extends ToolDialog {
         // extruded.
         objects = new Vector<>();
         paths = new Vector<>();
-        for(int j: selection) {
+        for (int j : selection) {
             ObjectInfo obj = scene.getObject(j);
             if (obj.getObject() instanceof Curve) {
                 objects.add(obj);
@@ -87,7 +87,9 @@ public class ExtrudeDialog extends ToolDialog {
         content.add(Translate.label("Tools:extrude.target.label"), 0, 0, 2, 1);
         content.add(objChoice = new BComboBox(), 0, 1, 2, 1);
 
-        for(var object: objects) objChoice.add(object.getName());
+        for (var object : objects) {
+            objChoice.add(object.getName());
+        }
 
         objChoice.addEventLink(ValueChangedEvent.class, this, "stateChanged");
         content.add(Translate.label("Tools:extrude.direction.label"), 0, 2, 2, 1);
@@ -107,7 +109,9 @@ public class ExtrudeDialog extends ToolDialog {
         distField.addEventLink(ValueChangedEvent.class, this, "makeObject");
         content.add(pathChoice = new BComboBox(), 1, 6);
 
-        for(ObjectInfo path: paths) pathChoice.add(path.getName());
+        for (ObjectInfo path : paths) {
+            pathChoice.add(path.getName());
+        }
 
         pathChoice.addEventLink(ValueChangedEvent.class, this, "stateChanged");
         RowContainer vectorRow = new RowContainer();
@@ -721,16 +725,6 @@ public class ExtrudeDialog extends ToolDialog {
     }
 
     // Inner class used for storing information about new edges being created.
-    private static class EdgeInfo {
-
-        final int v1;
-        final int v2;
-        final float smoothness;
-
-        public EdgeInfo(int vert1, int vert2, float smooth) {
-            v1 = vert1;
-            v2 = vert2;
-            smoothness = smooth;
-        }
+    private record EdgeInfo(int v1, int v2, float smoothness) {
     }
 }

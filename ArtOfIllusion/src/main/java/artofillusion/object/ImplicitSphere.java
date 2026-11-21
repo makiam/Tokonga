@@ -24,7 +24,7 @@ import java.io.*;
 /**
  * This is a spherical implicit object (i.e. a metaball). It is characterized by two numbers: a radius, which is the
  * radius of the sphere it creates in isolation, and an "influence radius", which is the distance it extends outward
- * before the implicit function becomes zero. The influence radius <i>must</i> by larger than the radius, or the behavior
+ * before the implicit function becomes zero. The influence radius <i>must</i> be larger than the radius, or the behavior
  * becomes undefined. This class is generally not useful on its own, but collections of ImplicitSpheres
  * are useful for many sorts of effects where balls should smoothly merge together when they come close.
  */

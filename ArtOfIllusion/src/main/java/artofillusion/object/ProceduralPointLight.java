@@ -1,5 +1,5 @@
 /* Copyright (C) 1999-2008 by Peter Eastman
-   Changes copyright (C) 2017-2025 by Maksim Khramov
+   Changes copyright (C) 2017-2026 by Maksim Khramov
 
    This program is free software; you can redistribute it and/or modify it under the
    terms of the GNU General Public License as published by the Free Software
@@ -69,7 +69,7 @@ public class ProceduralPointLight extends PointLight {
     private void findParameters() {
         var  modules = procedure.getModules();
         int count = 0;
-        for (var       module : modules) {
+        for (var module : modules) {
             if (module instanceof ParameterModule) {
                 count++;
             }
@@ -77,7 +77,7 @@ public class ProceduralPointLight extends PointLight {
         TextureParameter[] newParameters = new TextureParameter[count];
         double[] newValues = new double[count];
         count = 0;
-        for (var       module : modules) {
+        for (var module : modules) {
             if (module instanceof ParameterModule parameterModule) {
                 newParameters[count] = parameterModule.getParameter(this);
                 newValues[count] = newParameters[count].defaultVal;
