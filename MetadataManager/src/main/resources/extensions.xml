@@ -1,0 +1,27 @@
+<?xml version="1.0" standalone="yes"?>
+<extension name="MetadataManager" version="0.1">
+    <author>Nik TJ</author>
+    <date>April 2009</date>
+    <beta>1</beta>
+
+    <plugin class="nik777.aoi.metamanager.MetadataManager"/>
+    <category class="nik777.aoi.metamanager.MetadataEditor"/>
+
+    <resource type="TranslateBundle" id="MetadataManager" name="MetadataManager"/>
+
+    <description>
+        This plugin provides centralized management for scene metadata.
+        Other plugins register MetaDataEditor classes which this plugin then adds to
+        the "Scene | MetaData" menu group and opens and closes on user request.
+    </description>
+
+    <comments>
+    </comments>
+
+    <history>
+        <log version="0.1" author="Nik TJ" date="April 2009">
+            - initial release
+        </log>
+    </history>
+</extension>
+
