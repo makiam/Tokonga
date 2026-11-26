@@ -11,19 +11,14 @@ plugins {
 }
 
 application {
-    applicationDefaultJvmArgs = [
-            "-Dsun.java2d.noddraw=true"
-    ]
+    mainClass =  "artofillusion.ArtOfIllusion"
+    applicationDefaultJvmArgs = ["-Dsun.java2d.noddraw=true"]
 }
 
 description = 'Art Of Illusion'
 
 ext {
    mainClass = "artofillusion.ArtOfIllusion"
-}
-
-application {
-    mainClass =  "artofillusion.ArtOfIllusion"
 }
 
 dependencies {
