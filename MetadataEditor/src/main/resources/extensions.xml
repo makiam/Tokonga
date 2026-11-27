@@ -1,0 +1,75 @@
+<?xml version="1.0" standalone="yes"?>
+<extension name="MetaData" version="1.0">
+    <author>Nik Trevallyn-Jones</author>
+    <date>June 30 2007</date>
+
+    <plugin class="nik777.aoi.MetaData">
+        <export method="get" id="nik777.MetaData.get">
+            - retrieves metadata from the scene
+
+            @param Scene scene - the scene containing the metadata
+            @param String key - the string key associated with the metadata
+            @param Object result - the object to 'read' the metadata into. This may
+            represent multiple values, such as an array or a collection, etc.
+
+            @return the retrieved metadata object.
+        </export>
+
+        <export method="put" id="nik777.MetaData.put">
+            - puts metadata into a scene
+
+            @param Scene scene - the scene to contain the metadata
+            @param String key - the string key to associate with the metadata
+            @param Object value - the object which will be 'written' to metadata. This may
+            represent multiple values such as an array or collection, etc.
+
+            @return void.
+        </export>
+
+        <export method="find" id="nik777.MetaData.find">
+            - find metadata associated with 'key' (can include wildcards)
+
+            @param Scene scene - the scene containing the metadata
+            @param String key - the string key associated with the metadata
+            @param Object result - the object to set to the metadata value(s). This may
+            represent multiple values such as a collection, an array, etc.
+
+            @return the object or objects matching the key.
+        </export>
+
+        <export method="copy" id="nik777.MetaData.copy">
+            - copy one object to another, field-by-field.
+
+            @param Object from - the object to copy from
+            @param Object to - the object to copy to
+        </export>
+    </plugin>
+
+    <description>
+        Store meta-data in an AOI scene file
+    </description>
+    <comments>
+        This plugin allows other plugins to store non-modelling data inside an AOI
+        scene file.
+    </comments>
+    <history>
+        <log version="1.0" date="June 2007" author="Nik TJ">
+            - Changes for AOI 2.5 compatibility
+            - Moved version to 1.0
+        </log>
+        <log version="0.04b1" date="June 2006" author="Nik TJ">
+            - implemented MetaObject.find() and corresponding MetaData.FIND message
+            - changes for compatability with new argument to Xlate.copy() methods
+        </log>
+        <log version="0.03b1" date="June 2006" author="Nik TJ">
+            - changed how scrollbars are handled in GUI
+        </log>
+        <log version="0.02b1" date="June 2006" author="Nik TJ">
+            - fixed metedata deletion (MetaObject.remove())
+        </log>
+        <log version="0.01b1" date="June 2006" author="Nik TJ">
+            - initial coding
+        </log>
+    </history>
+</extension>
+
