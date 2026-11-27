@@ -33,16 +33,30 @@ public class MetaData implements Plugin, ModellingTool {
     }
 
     @PluginRegistry.Exported(id = "nik777.MetaData.put")
+    public Object get(Scene scene, String key, Object result) {
+        if (scene == null && this.global != null) {
+            return this.global.get(key);
+        }
+
+        MetaObject mobj = MetaObject.of(scene);
+        if (mobj != null) {
+            result = mobj.get(key, result);
+        }
+
+        return result;
+    }
+
+    @PluginRegistry.Exported(id = "nik777.MetaData.put")
     public void put(Scene scene, String key, Object value) {
         if (scene == null) {
             this.global.put(key, value);
         } else {
-            System.out.println("MetaData.put: " + key + " = " + value);
+            log.info("MetaData.put: {} = {} ", key, value);
+
             MetaObject mobj = MetaObject.of(scene);
             if (mobj == null) {
                 mobj = new MetaObject(scene);
             }
-
             mobj.put(key, value);
         }
     }
