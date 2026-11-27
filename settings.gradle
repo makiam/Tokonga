@@ -4,6 +4,7 @@ include ':ArtOfIllusion', ':Filters', ':OSSpecific', ':Renderers', ':Tools', ':T
         ':Polymesh', ':StandardModules', 'PreferencesPlugin', 'PrimitiveProviders'
 project(':PreferencesPlugin').projectDir = new File('Preferences')
 
+include ':MetadataEditor'
 //include(':SPManager')
 //include(':PostInstall')
 
